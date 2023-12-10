@@ -1,0 +1,183 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> exp
+Rule 1     exp -> exp SOMA exp1
+Rule 2     exp -> exp SUBTRACAO exp1
+Rule 3     exp -> exp1
+Rule 4     exp1 -> exp1 MULTIPLICACAO exp2
+Rule 5     exp1 -> exp1 DIVISAO exp2
+Rule 6     exp1 -> exp2
+Rule 7     exp2 -> NUMERO
+
+Terminals, with rules where they appear
+
+DIVISAO              : 5
+MULTIPLICACAO        : 4
+NUMERO               : 7
+SOMA                 : 1
+SUBTRACAO            : 2
+error                : 
+
+Nonterminals, with rules where they appear
+
+exp                  : 1 2 0
+exp1                 : 1 2 3 4 5
+exp2                 : 4 5 6
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . exp
+    (1) exp -> . exp SOMA exp1
+    (2) exp -> . exp SUBTRACAO exp1
+    (3) exp -> . exp1
+    (4) exp1 -> . exp1 MULTIPLICACAO exp2
+    (5) exp1 -> . exp1 DIVISAO exp2
+    (6) exp1 -> . exp2
+    (7) exp2 -> . NUMERO
+
+    NUMERO          shift and go to state 4
+
+    exp                            shift and go to state 1
+    exp1                           shift and go to state 2
+    exp2                           shift and go to state 3
+
+state 1
+
+    (0) S' -> exp .
+    (1) exp -> exp . SOMA exp1
+    (2) exp -> exp . SUBTRACAO exp1
+
+    SOMA            shift and go to state 5
+    SUBTRACAO       shift and go to state 6
+
+
+state 2
+
+    (3) exp -> exp1 .
+    (4) exp1 -> exp1 . MULTIPLICACAO exp2
+    (5) exp1 -> exp1 . DIVISAO exp2
+
+    SOMA            reduce using rule 3 (exp -> exp1 .)
+    SUBTRACAO       reduce using rule 3 (exp -> exp1 .)
+    $end            reduce using rule 3 (exp -> exp1 .)
+    MULTIPLICACAO   shift and go to state 7
+    DIVISAO         shift and go to state 8
+
+
+state 3
+
+    (6) exp1 -> exp2 .
+
+    MULTIPLICACAO   reduce using rule 6 (exp1 -> exp2 .)
+    DIVISAO         reduce using rule 6 (exp1 -> exp2 .)
+    SOMA            reduce using rule 6 (exp1 -> exp2 .)
+    SUBTRACAO       reduce using rule 6 (exp1 -> exp2 .)
+    $end            reduce using rule 6 (exp1 -> exp2 .)
+
+
+state 4
+
+    (7) exp2 -> NUMERO .
+
+    MULTIPLICACAO   reduce using rule 7 (exp2 -> NUMERO .)
+    DIVISAO         reduce using rule 7 (exp2 -> NUMERO .)
+    SOMA            reduce using rule 7 (exp2 -> NUMERO .)
+    SUBTRACAO       reduce using rule 7 (exp2 -> NUMERO .)
+    $end            reduce using rule 7 (exp2 -> NUMERO .)
+
+
+state 5
+
+    (1) exp -> exp SOMA . exp1
+    (4) exp1 -> . exp1 MULTIPLICACAO exp2
+    (5) exp1 -> . exp1 DIVISAO exp2
+    (6) exp1 -> . exp2
+    (7) exp2 -> . NUMERO
+
+    NUMERO          shift and go to state 4
+
+    exp1                           shift and go to state 9
+    exp2                           shift and go to state 3
+
+state 6
+
+    (2) exp -> exp SUBTRACAO . exp1
+    (4) exp1 -> . exp1 MULTIPLICACAO exp2
+    (5) exp1 -> . exp1 DIVISAO exp2
+    (6) exp1 -> . exp2
+    (7) exp2 -> . NUMERO
+
+    NUMERO          shift and go to state 4
+
+    exp1                           shift and go to state 10
+    exp2                           shift and go to state 3
+
+state 7
+
+    (4) exp1 -> exp1 MULTIPLICACAO . exp2
+    (7) exp2 -> . NUMERO
+
+    NUMERO          shift and go to state 4
+
+    exp2                           shift and go to state 11
+
+state 8
+
+    (5) exp1 -> exp1 DIVISAO . exp2
+    (7) exp2 -> . NUMERO
+
+    NUMERO          shift and go to state 4
+
+    exp2                           shift and go to state 12
+
+state 9
+
+    (1) exp -> exp SOMA exp1 .
+    (4) exp1 -> exp1 . MULTIPLICACAO exp2
+    (5) exp1 -> exp1 . DIVISAO exp2
+
+    SOMA            reduce using rule 1 (exp -> exp SOMA exp1 .)
+    SUBTRACAO       reduce using rule 1 (exp -> exp SOMA exp1 .)
+    $end            reduce using rule 1 (exp -> exp SOMA exp1 .)
+    MULTIPLICACAO   shift and go to state 7
+    DIVISAO         shift and go to state 8
+
+
+state 10
+
+    (2) exp -> exp SUBTRACAO exp1 .
+    (4) exp1 -> exp1 . MULTIPLICACAO exp2
+    (5) exp1 -> exp1 . DIVISAO exp2
+
+    SOMA            reduce using rule 2 (exp -> exp SUBTRACAO exp1 .)
+    SUBTRACAO       reduce using rule 2 (exp -> exp SUBTRACAO exp1 .)
+    $end            reduce using rule 2 (exp -> exp SUBTRACAO exp1 .)
+    MULTIPLICACAO   shift and go to state 7
+    DIVISAO         shift and go to state 8
+
+
+state 11
+
+    (4) exp1 -> exp1 MULTIPLICACAO exp2 .
+
+    MULTIPLICACAO   reduce using rule 4 (exp1 -> exp1 MULTIPLICACAO exp2 .)
+    DIVISAO         reduce using rule 4 (exp1 -> exp1 MULTIPLICACAO exp2 .)
+    SOMA            reduce using rule 4 (exp1 -> exp1 MULTIPLICACAO exp2 .)
+    SUBTRACAO       reduce using rule 4 (exp1 -> exp1 MULTIPLICACAO exp2 .)
+    $end            reduce using rule 4 (exp1 -> exp1 MULTIPLICACAO exp2 .)
+
+
+state 12
+
+    (5) exp1 -> exp1 DIVISAO exp2 .
+
+    MULTIPLICACAO   reduce using rule 5 (exp1 -> exp1 DIVISAO exp2 .)
+    DIVISAO         reduce using rule 5 (exp1 -> exp1 DIVISAO exp2 .)
+    SOMA            reduce using rule 5 (exp1 -> exp1 DIVISAO exp2 .)
+    SUBTRACAO       reduce using rule 5 (exp1 -> exp1 DIVISAO exp2 .)
+    $end            reduce using rule 5 (exp1 -> exp1 DIVISAO exp2 .)
+

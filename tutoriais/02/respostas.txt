@@ -1,0 +1,40 @@
+Respostas:
+
+1- A execução ocorreu com erros.
+Saída completa:
+
+WARNING: no p_error() function is defined
+ERROR: /home/marcosv/Documentos/Projetos/LFS/LFT-Project/tutoriais/02/exemplo1.py:11: Symbol 'exp1' used, but not defined as a token or a rule
+ERROR: /home/marcosv/Documentos/Projetos/LFS/LFT-Project/tutoriais/02/exemplo1.py:15: Symbol 'exp1' used, but not defined as a token or a rule
+ERROR: /home/marcosv/Documentos/Projetos/LFS/LFT-Project/tutoriais/02/exemplo1.py:19: Symbol 'exp1' used, but not defined as a token or a rule
+WARNING: Token 'DIVISAO' defined, but not used
+WARNING: Token 'MULTIPLICACAO' defined, but not used
+WARNING: Token 'NUMERO' defined, but not used
+WARNING: There are 3 unused tokens
+ERROR: Infinite recursion detected for symbol 'exp'
+Traceback (most recent call last):
+  File "/home/marcosv/Documentos/Projetos/LFS/LFT-Project/tutoriais/02/exemplo1.py", line 22, in <module>ç
+    parser = yacc.yacc()  # Criação do analisador sintático
+             ^^^^^^^^^^^
+  File "/home/marcosv/Documentos/Projetos/LFS/LFT-Project/venv/lib/python3.12/site-packages/ply/yacc.py", line 3432, in yacc
+    raise YaccError('Unable to build parser')
+ply.yacc.YaccError: Unable to build parser
+
+3- Funcionou. Foi mostrado informações dos estados no Log
+
+4- Não funcionou de primeira. Foi necessário adicionar todas as regras.
+
+5-
+
+    E
+   / \
+  /   \
+ E  +  T
+ |     |
+ 3     4
+
+ 6- Após adicionar as regras, ele roda normalmente sem erros. Falta imprimir os resultados na tela
+
+ 7- Foi adicionado um input para fazer a conta
+
+ 8- Foi apenas ativar o Debug que ele mostrou as informações
