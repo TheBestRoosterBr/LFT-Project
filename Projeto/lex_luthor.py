@@ -1,34 +1,63 @@
 import ply.lex as lex
 
 # Lista de nomes de tokens. Isso é sempre necessário
-tokens = [
-  'IDENTIFIER', 'NUMBER',
-  'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MODULUS', # + - * / %
-  'EQUALS_THEN', 'NOT_EQUALS', 'GREATER_THEN', 'LESS_THEN', "LESS_EQUALS", 'GREATER_EQUALS', #== != > <  <= >=
-  'LOGICAL_AND', 'LOGICAL_OR', 'NOT', #&& || !
-  'BITWISE_AND', 'BITWISE_OR', 'BITWISE_XOR', 'BITWISE_COMPLEMENT', 'BITWISE_SHIFT_LEFT', 'BITWISE_SHIFT_RIGHT', # & | ^ ~ << >>
+
+keywords = [
+    'KEYWORD_AUTO', 'KEYWORD_BREAK', 'KEYWORD_CASE', 'KEYWORD_CONST', 'KEYWORD_CONTINUE',
+    'KEYWORD_DEFAULT', 'KEYWORD_DO', 'KEYWORD_ELSE', 'KEYWORD_ENUM', 'KEYWORD_EXTERN',
+    'KEYWORD_FOR', 'KEYWORD_GOTO', 'KEYWORD_IF', 'KEYWORD_REGISTER',
+    'KEYWORD_RETURN', 'KEYWORD_SIGNED', 'KEYWORD_SIZEOF', 'KEYWORD_STATIC', 'KEYWORD_STRUCT',
+    'KEYWORD_SWITCH', 'KEYWORD_TYPEDEF', 'KEYWORD_UNION', 'KEYWORD_UNSIGNED', 'KEYWORD_VOLATILE',
+    'KEYWORD_WHILE',
+]
+
+data_types = [
+    'TYPE_CHAR', 'TYPE_DOUBLE', 'TYPE_FLOAT', 'TYPE_INT', 'TYPE_LONG', 'TYPE_SHORT', 'TYPE_VOID',
+]
+
+numbers = [
+    'NUMBER', 'FLOAT_NUMBER', 'BINARY_NUMBER', 'HEXADECIMAL_NUMBER', 'OCTAL_NUMBER'
+]
+
+assigns = [
+    'ASSIGN', 'PLUS_ASSIGN', 'MINUS_ASSIGN', 'TIMES_ASSIGN', 'DIVIDE_ASSIGN', 'MODULUS_ASSIGN', 'SHIFT_LEFT_ASSIGN',
+    'SHIFT_RIGHT_ASSIGN', 'BITWISE_AND_ASSIGN', 'BITWISE_OR_ASSIGN', 'BITWISE_XOR_ASSIGN',
+]
+
+math_operators = [
+    'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MODULUS',
+]
+
+logical_operators = [
+    'LOGICAL_AND', 'LOGICAL_OR', 'NOT',
+]
+
+compare_operators = [
+    'EQUALS_THEN', 'NOT_EQUALS', 'GREATER_THEN', 'LESS_THEN', "LESS_EQUALS", 'GREATER_EQUALS'
+]
+
+bitwise_operators = [
+    'BITWISE_AND', 'BITWISE_OR', 'BITWISE_XOR', 'BITWISE_COMPLEMENT', 'BITWISE_SHIFT_LEFT', 'BITWISE_SHIFT_RIGHT'
+]
+
+others = [
+  'IDENTIFIER',
   'INCREMENT', 'DECREMENT', #++ --
   'LPAREN', 'RPAREN', # ( )
   'LBRACKET', 'RBRACKET', # [ ]
   'LBRACE', 'RBRACE', # { }
   'SEMICOLON', # ;
-  'ASSIGN', 'PLUS_ASSIGN', 'MINUS_ASSIGN', 'TIMES_ASSIGN', 'DIVIDE_ASSIGN', 'MODULUS_ASSIGN', 'SHIFT_LEFT_ASSIGN', # = += -= *= /= %= <<=
-  'SHIFT_RIGHT_ASSIGN', 'BITWISE_AND_ASSIGN', 'BITWISE_OR_ASSIGN', 'BITWISE_XOR_ASSIGN',# >>= &= |= ^=
   'COMMENT', 'MULTILINE_COMMENT', #//aa /*aaa*/
   'STRING', 'CHARACTER', #"string", 'c'
   'COMMA', 'DOT', #, .
   'QUESTION_MARK', # ?
   'COLON', #:
   'ARROW', #->
-  'PRE_PROCESSOR' #include..... N tem tratamento, mas ele marca como pre processor da quele jeito
-] + ['KEYWORD_AUTO', 'KEYWORD_BREAK', 'KEYWORD_CASE', 'KEYWORD_CONST', 'KEYWORD_CONTINUE',
-     'KEYWORD_DEFAULT', 'KEYWORD_DO', 'KEYWORD_ELSE', 'KEYWORD_ENUM', 'KEYWORD_EXTERN',
-     'KEYWORD_FOR', 'KEYWORD_GOTO', 'KEYWORD_IF', 'KEYWORD_REGISTER',
-     'KEYWORD_RETURN', 'KEYWORD_SIGNED', 'KEYWORD_SIZEOF', 'KEYWORD_STATIC', 'KEYWORD_STRUCT',
-     'KEYWORD_SWITCH', 'KEYWORD_TYPEDEF', 'KEYWORD_UNION', 'KEYWORD_UNSIGNED', 'KEYWORD_VOLATILE',
-     'KEYWORD_WHILE'] + [
-     'TYPE_CHAR', 'TYPE_DOUBLE', 'TYPE_FLOAT', 'TYPE_INT', 'TYPE_LONG', 'TYPE_SHORT', 'TYPE_VOID' #Tipos de dados padrões
+  'PRE_PROCESSOR',
 ]
+
+tokens = (keywords + data_types + numbers + assigns + math_operators + logical_operators + compare_operators +
+          bitwise_operators + others)
 
 
 # Palavras-chave da linguagem
@@ -146,22 +175,24 @@ def t_STRING(t):
     t.value = bytes(t.value, "utf-8").decode("unicode_escape")
     return t
 
+
 def t_CHARACTER(t):
     r"'([^'\\]|\\.)'"
     t.value = bytes(t.value, "utf-8").decode("unicode_escape")
     return t
 
-# Regra complexa para identificadores (inclui palavras-chave)
+
+t_HEXADECIMAL_NUMBER = r'0[Xx][0-9A-Fa-f]+'
+t_BINARY_NUMBER = r'0[Bb][01]+'
+t_OCTAL_NUMBER = r'0[Oo][0-7]+'
+t_NUMBER = r'[+-]?\d+'
+t_FLOAT_NUMBER = r'[+-]?(\d+\.\d+)'
+
 def t_IDENTIFIER(t):
    r'[a-zA-Z_][a-zA-Z_0-9]*'
    t.type = reserved.get(t.value, 'IDENTIFIER') # Verifica palavras reservadas
    return t
 
-# Regra para números
-def t_NUMBER(t):
-   r'\d+'
-   t.value = int(t.value)
-   return t
 
 def t_PREPROCESSOR(t):
     r'\#(include|define|if|ifdef|ifndef|else|elif|endif|undef|error|pragma).*'
@@ -182,13 +213,20 @@ def t_error(t):
    t.lexer.skip(1)
 lexer = lex.lex()
 
-file = '/mnt/e/Documentos/Projetos/C_CPP/CopiaDaSaxa/FreshFish/src/board.c'
+code = '''
+    
+    0b111
+    0xFF8
+    0o66
+    +90
+    +90.90
+    
+'''
 
-code = ''
-with open(file, 'r') as f:
-    code = f.read()
+
 lexer.input(code)
 
-# Realizando analise lexica
-for tok in lexer:
-    print('{}  {}  {}'.format(tok.type, str(tok.value), str(tok.lineno)))
+if __name__ == "__main__":
+    # Realizando analise lexica
+    for tok in lexer:
+        print('{}  {}  {}'.format(tok.type, str(tok.value), str(tok.lineno)))
