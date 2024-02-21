@@ -19,13 +19,13 @@ from abc import ABC
 
 
 # Programa
-class Programa:
+class Programa():
     def __init__(self, listadecomandos):
         self.listadecomandos = listadecomandos
 
     @abstractmethod
     def print(self):
-        pass
+        self.listadecomandos.print()
 
 
 # Listadecomandos
@@ -50,7 +50,9 @@ class MaisdeUmComando(Listadecomandos):
         self.listadecomandos = listadecomandos
 
     def print(self):
-        pass
+        print('[MaisdeUmComando', end='')
+        self.comando.print()
+        self.listadecomandos.print()
 
 
 # Comando
@@ -66,7 +68,8 @@ class DeclaracaoVariavel(Comando):
         self.expressao = expressao
 
     def print(self):
-        pass
+        print('[DeclaracaoVariavel]', end='')
+        self.expressao.print()
 
 
 class AtribuicaoVariavel(Comando):
@@ -75,6 +78,103 @@ class AtribuicaoVariavel(Comando):
         self.expressao = expressao
 
     def print(self):
-        pass
+        print('[AtribuicaoVariavel]')
+        self.expressao.print()
+
+
+class ComandoIfElse(Comando):
+    def __init__(self, expressao, lista_de_comandos_if, lista_de_comandos_else):
+        self.expressao = expressao
+        self.lista_de_comandos_if = lista_de_comandos_if
+        self.lista_de_comandos_else = lista_de_comandos_else
+
+    def print(self):
+        print('[ComandoIfElse]', end='')
+        self.expressao.print()
+        self.lista_de_comandos_if.print()
+        self.lista_de_comandos_else.print()
+
+
+class ComandoWhile(Comando):
+    def __init__(self, expressao, lista_de_comandos):
+        self.expressao = expressao
+        self.lista_de_comandos = lista_de_comandos
+
+    def print(self):
+        print('[ComandoWhile]', end='')
+        self.expressao.print()
+        self.lista_de_comandos.print()
+
 
 # Expressao
+class Expressao(ABC):
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def print(self):
+        print('[Expressao]', end='')
+
+
+class ExpressaoSoma(Expressao):
+    def __init__(self, expressao1, expressao2):
+        super().__init__()
+        self.expressao1 = expressao1
+        self.expressao2 = expressao2
+
+    def print(self):
+        print('[ExpressaoSoma]', end='')
+        self.expressao1.print()
+        self.expressao2.print()
+
+
+class ExpressaoMenos(Expressao):
+    def __init__(self, expressao1, expressao2):
+        super().__init__()
+        self.expressao1 = expressao1
+        self.expressao2 = expressao2
+
+    def print(self):
+        print('[ExpressaoMenos]', end='')
+        self.expressao1.print()
+        self.expressao2.print()
+
+
+class ExpressaoVezes(Expressao):
+    def __init__(self, expressao1, expressao2):
+        super().__init__()
+        self.expressao1 = expressao1
+        self.expressao2 = expressao2
+
+    def print(self):
+        print('[ExpressaoVezes]', end='')
+        self.expressao1.print()
+        self.expressao2.print()
+
+
+class ExpressaoDivisao(Expressao):
+    def __init__(self, expressao1, expressao2):
+        super().__init__()
+        self.expressao1 = expressao1
+        self.expressao2 = expressao2
+
+    def print(self):
+        print('[ExpressaoDivisao]', end='')
+        self.expressao1.print()
+        self.expressao2.print()
+
+
+class ExpressaoId(Expressao):
+    def __init__(self, ID):
+        super().__init__()
+        self.ID = ID
+
+    def print(self):
+        print('[ExpressaoId]', end='')
+
+class ExpressaoNumero(Expressao):
+    def __init__(self, numero):
+        self.numero = numero
+
+    def print(self):
+        print('[ExpressaoNumero]', end='')
