@@ -1,5 +1,4 @@
 from Projeto.lex.lex_luthor import *
-from expressions import *
 import ply.yacc
 
 
@@ -33,7 +32,7 @@ def p_commands(p):
 
 def p_command(p):
     """
-        command : data_definition SEMICOLON
+        command : data_type IDENTIFIER SEMICOLON
                 | while_loop
                 | assign SEMICOLON
                 | define_and_assign SEMICOLON
@@ -63,31 +62,16 @@ def p_assign(p):
     """
 
 
-def p_array_declaration(p):
+def p_define_and_assign(p):
     """
-        array_declaration : type IDENTIFIER LBRACKET RBRACKET
-                          | pointer IDENTIFIER LBRACKET RBRACKET
-    """
-
-
-def p_array_definition(p):
-    """
-        array_definition : static_array_definition
-                         | runtime_array_definition
+        define_and_assign : type assign
+                         | pointer assign
     """
 
 
-def p_static_array_definition(p):
+def p_assign(p):
     """
-        static_array_definition : type IDENTIFIER LBRACKET NUMBER RBRACKET
-                                | pointer IDENTIFIER LBRACKET NUMBER RBRACKET
-    """
-
-
-def p_runtime_array_definition(p):
-    """
-         runtime_array_definition : type IDENTIFIER LBRACKET IDENTIFIER RBRACKET
-                                 | pointer IDENTIFIER LBRACKET IDENTIFIER RBRACKET
+        assign : IDENTIFIER ASSIGN expression
     """
 
 
@@ -123,6 +107,14 @@ def p_expression2(p):
                     | define_and_assign
 
 
+    """
+
+
+def p_expression(p):
+    """
+        expression : expression expression2
+                    | NOT expression
+                    | expression2
     """
 
 
@@ -169,36 +161,35 @@ def p_parameters_list(p):
 
 def p_array_declaration(p):
     """
-        array_declaration : type IDENTIFIER LBRACKET RBRACKET
-                          | pointer IDENTIFIER LBRACKET RBRACKET
-    """
-
-
-def p_data_definition(p):
-    """
-        data_definition : type IDENTIFIER
-                        | pointer IDENTIFIER
+        array_declaration : data_definition IDENTIFIER LBRACKET RBRACKET
     """
 
 
 def p_array_definition(p):
     """
-        array_definition : static_array_definition
-                         | runtime_array_definition
+        array_definition : data_definition IDENTIFIER multiple_bracket_array
     """
 
 
-def p_static_array_definition(p):
+def p_sized_bracket_array(p):
     """
-        static_array_definition : type IDENTIFIER LBRACKET NUMBER RBRACKET
-                                | pointer IDENTIFIER LBRACKET NUMBER RBRACKET
+        sized_bracket_array : LBRACKET IDENTIFIER RBRACKET
+                            | LBRACKET NUMBER RBRACKET
     """
 
 
-def p_runtime_array_definition(p):
+def p_multiple_bracket_array(p):
     """
-         runtime_array_definition : type IDENTIFIER LBRACKET IDENTIFIER RBRACKET
-                                 | pointer IDENTIFIER LBRACKET IDENTIFIER RBRACKET
+        multiple_bracket_array :  sized_bracket_array multiple_bracket_array
+                                | sized_bracket_array
+    """
+
+
+# Types
+def p_data_type(p):
+    """
+        data_type : type
+        | pointer
     """
 
 
@@ -241,6 +232,8 @@ def p_multiple_pointer(p):
                          | TIMES
     """
 
+
+# Fim dos tipos
 
 def p_error(p):
     if p:
