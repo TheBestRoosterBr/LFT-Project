@@ -4,19 +4,22 @@ Unused terminals:
 
     ARROW
     BITWISE_AND
-    BITWISE_AND_ASSIGN
     BITWISE_COMPLEMENT
     BITWISE_OR
-    BITWISE_OR_ASSIGN
     BITWISE_SHIFT_LEFT
     BITWISE_SHIFT_RIGHT
     BITWISE_XOR
-    BITWISE_XOR_ASSIGN
+    CHARACTER
     COLON
     COMMENT
     DECREMENT
+    DIVIDE
     DIVIDE_ASSIGN
     DOT
+    EQUALS_THEN
+    FLOAT_NUMBER
+    GREATER_EQUALS
+    GREATER_THEN
     INCREMENT
     KEYWORD_AUTO
     KEYWORD_BREAK
@@ -41,131 +44,121 @@ Unused terminals:
     KEYWORD_UNION
     KEYWORD_UNSIGNED
     KEYWORD_VOLATILE
+    KEYWORD_WHILE
+    LESS_EQUALS
+    LESS_THEN
+    LOGICAL_AND
+    LOGICAL_OR
+    MINUS
     MINUS_ASSIGN
+    MODULUS
     MODULUS_ASSIGN
     MULTILINE_COMMENT
+    NOT
+    NOT_EQUALS
+    PLUS
     PLUS_ASSIGN
     PRE_PROCESSOR
     QUESTION_MARK
     SHIFT_LEFT_ASSIGN
     SHIFT_RIGHT_ASSIGN
+    STRING
     TIMES_ASSIGN
 
 Grammar
 
 Rule 0     S' -> program
-Rule 1     program -> function_declaration program
-Rule 2     program -> function program
-Rule 3     program -> <empty>
-Rule 4     function_declaration -> signature SEMICOLON
-Rule 5     command_block -> LBRACE commands RBRACE
-Rule 6     command_block -> LBRACE RBRACE
-Rule 7     commands -> command commands
-Rule 8     commands -> command
-Rule 9     command -> type IDENTIFIER SEMICOLON
-Rule 10    command -> while_loop
-Rule 11    command -> assign SEMICOLON
-Rule 12    command -> define_and_assign SEMICOLON
-Rule 13    command -> expression SEMICOLON
-Rule 14    command -> command_block
-Rule 15    command -> SEMICOLON
-Rule 16    command -> array_definition SEMICOLON
-Rule 17    while_signature -> KEYWORD_WHILE LPAREN expression RPAREN
-Rule 18    while_loop -> while_signature command_block
-Rule 19    while_loop -> while_signature command
-Rule 20    assign -> IDENTIFIER ASSIGN expression
-Rule 21    define_and_assign -> type assign
-Rule 22    define_and_assign -> pointer assign
-Rule 23    expression2 -> LOGICAL_AND expression
-Rule 24    expression2 -> LOGICAL_OR expression
-Rule 25    expression2 -> PLUS expression
-Rule 26    expression2 -> MINUS expression
-Rule 27    expression2 -> TIMES expression
-Rule 28    expression2 -> DIVIDE expression
-Rule 29    expression2 -> MODULUS expression
-Rule 30    expression2 -> EQUALS_THEN expression
-Rule 31    expression2 -> NOT_EQUALS expression
-Rule 32    expression2 -> GREATER_THEN expression
-Rule 33    expression2 -> LESS_THEN expression
-Rule 34    expression2 -> LESS_EQUALS expression
-Rule 35    expression2 -> GREATER_EQUALS expression
-Rule 36    expression2 -> LPAREN expression RPAREN
-Rule 37    expression2 -> expression
-Rule 38    expression2 -> IDENTIFIER
-Rule 39    expression2 -> number
-Rule 40    expression2 -> STRING
-Rule 41    expression2 -> CHARACTER
-Rule 42    expression2 -> assign
-Rule 43    expression2 -> define_and_assign
-Rule 44    expression -> expression expression2
-Rule 45    expression -> NOT expression
-Rule 46    expression -> expression2
-Rule 47    number -> NUMBER
-Rule 48    number -> FLOAT_NUMBER
-Rule 49    number -> BINARY_NUMBER
-Rule 50    number -> HEXADECIMAL_NUMBER
-Rule 51    number -> OCTAL_NUMBER
-Rule 52    function -> signature command_block
-Rule 53    signature -> type IDENTIFIER function_parameters
-Rule 54    signature -> pointer IDENTIFIER function_parameters
-Rule 55    function_parameters -> LPAREN parameters_list RPAREN
-Rule 56    function_parameters -> LPAREN RPAREN
-Rule 57    parameters_list -> data_definition COMMA parameters_list
-Rule 58    parameters_list -> data_definition
-Rule 59    parameters_list -> array_definition COMMA parameters_list
-Rule 60    parameters_list -> array_definition
-Rule 61    parameters_list -> array_declaration COMMA parameters_list
-Rule 62    parameters_list -> array_declaration
-Rule 63    array_declaration -> data_definition IDENTIFIER LBRACKET RBRACKET
-Rule 64    array_definition -> data_definition IDENTIFIER multiple_bracket_array
-Rule 65    sized_bracket_array -> LBRACKET IDENTIFIER RBRACKET
-Rule 66    sized_bracket_array -> LBRACKET NUMBER RBRACKET
-Rule 67    multiple_bracket_array -> sized_bracket_array multiple_bracket_array
-Rule 68    multiple_bracket_array -> sized_bracket_array
-Rule 69    type -> primitive_types
-Rule 70    type -> user_types
-Rule 71    primitive_types -> TYPE_CHAR
-Rule 72    primitive_types -> TYPE_DOUBLE
-Rule 73    primitive_types -> TYPE_FLOAT
-Rule 74    primitive_types -> TYPE_INT
-Rule 75    primitive_types -> TYPE_LONG
-Rule 76    primitive_types -> TYPE_SHORT
-Rule 77    primitive_types -> TYPE_VOID
-Rule 78    user_types -> IDENTIFIER
-Rule 79    user_types -> KEYWORD_STRUCT IDENTIFIER
-Rule 80    pointer -> type TIMES multiple_pointer
-Rule 81    pointer -> type TIMES
-Rule 82    multiple_pointer -> TIMES multiple_pointer
-Rule 83    multiple_pointer -> TIMES
+Rule 1     program -> function_signature SEMICOLON program
+Rule 2     program -> variable_declaration SEMICOLON program
+Rule 3     program -> function program
+Rule 4     program -> <empty>
+Rule 5     command_block -> LBRACE RBRACE
+Rule 6     command_block -> LBRACE command_list RBRACE
+Rule 7     command_list -> command command_list
+Rule 8     command_list -> command
+Rule 9     command -> variable_declaration SEMICOLON
+Rule 10    command -> variable_declaration ASSIGN expression SEMICOLON
+Rule 11    command -> IDENTIFIER ASSIGN expression SEMICOLON
+Rule 12    command -> expression SEMICOLON
+Rule 13    command -> SEMICOLON
+Rule 14    function -> function_signature command_block
+Rule 15    function_signature -> type IDENTIFIER LPAREN signature_param_list RPAREN
+Rule 16    function_signature -> pointer IDENTIFIER LPAREN signature_param_list RPAREN
+Rule 17    function_signature -> type IDENTIFIER LPAREN RPAREN
+Rule 18    function_signature -> pointer IDENTIFIER LPAREN RPAREN
+Rule 19    signature_param_list -> signature_param COMMA signature_param
+Rule 20    signature_param_list -> signature_param
+Rule 21    signature_param -> type
+Rule 22    signature_param -> pointer
+Rule 23    signature_param -> type multiple_bracket_signature
+Rule 24    signature_param -> pointer multiple_bracket_signature
+Rule 25    signature_param -> variable_declaration
+Rule 26    signature_param -> variable_declaration multiple_bracket_signature
+Rule 27    multiple_bracket_signature -> LBRACKET RBRACKET multiple_bracket_with_bounds
+Rule 28    multiple_bracket_signature -> multiple_bracket_with_bounds
+Rule 29    multiple_bracket_with_bounds -> bracket_with_bounds multiple_bracket_with_bounds
+Rule 30    multiple_bracket_with_bounds -> bracket_with_bounds
+Rule 31    bracket_with_bounds -> LBRACKET number_id RBRACKET
+Rule 32    number_id -> IDENTIFIER
+Rule 33    number_id -> integer_number
+Rule 34    variable_declaration -> type IDENTIFIER
+Rule 35    variable_declaration -> pointer IDENTIFIER
+Rule 36    pointer -> type multiple_times
+Rule 37    type -> user_types
+Rule 38    type -> primitive_types
+Rule 39    user_types -> IDENTIFIER
+Rule 40    user_types -> KEYWORD_STRUCT IDENTIFIER
+Rule 41    primitive_types -> TYPE_CHAR
+Rule 42    primitive_types -> TYPE_INT
+Rule 43    primitive_types -> TYPE_SHORT
+Rule 44    primitive_types -> TYPE_LONG
+Rule 45    primitive_types -> TYPE_FLOAT
+Rule 46    primitive_types -> TYPE_DOUBLE
+Rule 47    primitive_types -> TYPE_VOID
+Rule 48    multiple_times -> TIMES multiple_times
+Rule 49    multiple_times -> TIMES
+Rule 50    integer_number -> NUMBER
+Rule 51    integer_number -> BINARY_NUMBER
+Rule 52    integer_number -> HEXADECIMAL_NUMBER
+Rule 53    integer_number -> OCTAL_NUMBER
+Rule 54    expression -> and_assign_bitwise_operator
+Rule 55    and_assign_bitwise_operator -> xor_assign_bitwise_operator BITWISE_AND_ASSIGN and_assign_bitwise_operator
+Rule 56    and_assign_bitwise_operator -> xor_assign_bitwise_operator
+Rule 57    xor_assign_bitwise_operator -> or_assign_bitwise_operator BITWISE_XOR_ASSIGN xor_assign_bitwise_operator
+Rule 58    xor_assign_bitwise_operator -> or_assign_bitwise_operator
+Rule 59    or_assign_bitwise_operator -> or_assign_bitwise_operator BITWISE_OR_ASSIGN left_shift_bitwise_assign
+Rule 60    or_assign_bitwise_operator -> left_shift_bitwise_assign
+Rule 61    left_shift_bitwise_assign -> IDENTIFIER
+Rule 62    left_shift_bitwise_assign -> integer_number
 
 Terminals, with rules where they appear
 
 ARROW                : 
-ASSIGN               : 20
-BINARY_NUMBER        : 49
+ASSIGN               : 10 11
+BINARY_NUMBER        : 51
 BITWISE_AND          : 
-BITWISE_AND_ASSIGN   : 
+BITWISE_AND_ASSIGN   : 55
 BITWISE_COMPLEMENT   : 
 BITWISE_OR           : 
-BITWISE_OR_ASSIGN    : 
+BITWISE_OR_ASSIGN    : 59
 BITWISE_SHIFT_LEFT   : 
 BITWISE_SHIFT_RIGHT  : 
 BITWISE_XOR          : 
-BITWISE_XOR_ASSIGN   : 
-CHARACTER            : 41
+BITWISE_XOR_ASSIGN   : 57
+CHARACTER            : 
 COLON                : 
-COMMA                : 57 59 61
+COMMA                : 19
 COMMENT              : 
 DECREMENT            : 
-DIVIDE               : 28
+DIVIDE               : 
 DIVIDE_ASSIGN        : 
 DOT                  : 
-EQUALS_THEN          : 30
-FLOAT_NUMBER         : 48
-GREATER_EQUALS       : 35
-GREATER_THEN         : 32
-HEXADECIMAL_NUMBER   : 50
-IDENTIFIER           : 9 20 38 53 54 63 64 65 78 79
+EQUALS_THEN          : 
+FLOAT_NUMBER         : 
+GREATER_EQUALS       : 
+GREATER_THEN         : 
+HEXADECIMAL_NUMBER   : 52
+IDENTIFIER           : 11 15 16 17 18 32 34 35 39 40 61
 INCREMENT            : 
 KEYWORD_AUTO         : 
 KEYWORD_BREAK        : 
@@ -185,77 +178,1569 @@ KEYWORD_RETURN       :
 KEYWORD_SIGNED       : 
 KEYWORD_SIZEOF       : 
 KEYWORD_STATIC       : 
-KEYWORD_STRUCT       : 79
+KEYWORD_STRUCT       : 40
 KEYWORD_SWITCH       : 
 KEYWORD_TYPEDEF      : 
 KEYWORD_UNION        : 
 KEYWORD_UNSIGNED     : 
 KEYWORD_VOLATILE     : 
-KEYWORD_WHILE        : 17
+KEYWORD_WHILE        : 
 LBRACE               : 5 6
-LBRACKET             : 63 65 66
-LESS_EQUALS          : 34
-LESS_THEN            : 33
-LOGICAL_AND          : 23
-LOGICAL_OR           : 24
-LPAREN               : 17 36 55 56
-MINUS                : 26
+LBRACKET             : 27 31
+LESS_EQUALS          : 
+LESS_THEN            : 
+LOGICAL_AND          : 
+LOGICAL_OR           : 
+LPAREN               : 15 16 17 18
+MINUS                : 
 MINUS_ASSIGN         : 
-MODULUS              : 29
+MODULUS              : 
 MODULUS_ASSIGN       : 
 MULTILINE_COMMENT    : 
-NOT                  : 45
-NOT_EQUALS           : 31
-NUMBER               : 47 66
-OCTAL_NUMBER         : 51
-PLUS                 : 25
+NOT                  : 
+NOT_EQUALS           : 
+NUMBER               : 50
+OCTAL_NUMBER         : 53
+PLUS                 : 
 PLUS_ASSIGN          : 
 PRE_PROCESSOR        : 
 QUESTION_MARK        : 
 RBRACE               : 5 6
-RBRACKET             : 63 65 66
-RPAREN               : 17 36 55 56
-SEMICOLON            : 4 9 11 12 13 15 16
+RBRACKET             : 27 31
+RPAREN               : 15 16 17 18
+SEMICOLON            : 1 2 9 10 11 12 13
 SHIFT_LEFT_ASSIGN    : 
 SHIFT_RIGHT_ASSIGN   : 
-STRING               : 40
-TIMES                : 27 80 81 82 83
+STRING               : 
+TIMES                : 48 49
 TIMES_ASSIGN         : 
-TYPE_CHAR            : 71
-TYPE_DOUBLE          : 72
-TYPE_FLOAT           : 73
-TYPE_INT             : 74
-TYPE_LONG            : 75
-TYPE_SHORT           : 76
-TYPE_VOID            : 77
+TYPE_CHAR            : 41
+TYPE_DOUBLE          : 46
+TYPE_FLOAT           : 45
+TYPE_INT             : 42
+TYPE_LONG            : 44
+TYPE_SHORT           : 43
+TYPE_VOID            : 47
 error                : 
 
 Nonterminals, with rules where they appear
 
-array_declaration    : 61 62
-array_definition     : 16 59 60
-assign               : 11 21 22 42
-command              : 7 8 19
-command_block        : 14 18 52
-commands             : 5 7
-data_definition      : 57 58 63 64
-define_and_assign    : 12 43
-expression           : 13 17 20 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 44 45
-expression2          : 44 46
-function             : 2
-function_declaration : 1
-function_parameters  : 53 54
-multiple_bracket_array : 64 67
-multiple_pointer     : 80 82
-number               : 39
-parameters_list      : 55 57 59 61
-pointer              : 22 54
-primitive_types      : 69
-program              : 1 2 0
-signature            : 4 52
-sized_bracket_array  : 67 68
-type                 : 9 21 53 80 81
-user_types           : 70
-while_loop           : 10
-while_signature      : 18 19
+and_assign_bitwise_operator : 54 55
+bracket_with_bounds  : 29 30
+command              : 7 8
+command_block        : 14
+command_list         : 6 7
+expression           : 10 11 12
+function             : 3
+function_signature   : 1 14
+integer_number       : 33 62
+left_shift_bitwise_assign : 59 60
+multiple_bracket_signature : 23 24 26
+multiple_bracket_with_bounds : 27 28 29
+multiple_times       : 36 48
+number_id            : 31
+or_assign_bitwise_operator : 57 58 59
+pointer              : 16 18 22 24 35
+primitive_types      : 38
+program              : 1 2 3 0
+signature_param      : 19 19 20
+signature_param_list : 15 16
+type                 : 15 17 21 23 34 36
+user_types           : 37
+variable_declaration : 2 9 10 25 26
+xor_assign_bitwise_operator : 55 56 57
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . function_signature SEMICOLON program
+    (2) program -> . variable_declaration SEMICOLON program
+    (3) program -> . function program
+    (4) program -> .
+    (15) function_signature -> . type IDENTIFIER LPAREN signature_param_list RPAREN
+    (16) function_signature -> . pointer IDENTIFIER LPAREN signature_param_list RPAREN
+    (17) function_signature -> . type IDENTIFIER LPAREN RPAREN
+    (18) function_signature -> . pointer IDENTIFIER LPAREN RPAREN
+    (34) variable_declaration -> . type IDENTIFIER
+    (35) variable_declaration -> . pointer IDENTIFIER
+    (14) function -> . function_signature command_block
+    (37) type -> . user_types
+    (38) type -> . primitive_types
+    (36) pointer -> . type multiple_times
+    (39) user_types -> . IDENTIFIER
+    (40) user_types -> . KEYWORD_STRUCT IDENTIFIER
+    (41) primitive_types -> . TYPE_CHAR
+    (42) primitive_types -> . TYPE_INT
+    (43) primitive_types -> . TYPE_SHORT
+    (44) primitive_types -> . TYPE_LONG
+    (45) primitive_types -> . TYPE_FLOAT
+    (46) primitive_types -> . TYPE_DOUBLE
+    (47) primitive_types -> . TYPE_VOID
+
+    $end            reduce using rule 4 (program -> .)
+    IDENTIFIER      shift and go to state 6
+    KEYWORD_STRUCT  shift and go to state 10
+    TYPE_CHAR       shift and go to state 11
+    TYPE_INT        shift and go to state 12
+    TYPE_SHORT      shift and go to state 13
+    TYPE_LONG       shift and go to state 14
+    TYPE_FLOAT      shift and go to state 15
+    TYPE_DOUBLE     shift and go to state 16
+    TYPE_VOID       shift and go to state 17
+
+    program                        shift and go to state 1
+    function_signature             shift and go to state 2
+    variable_declaration           shift and go to state 3
+    function                       shift and go to state 4
+    type                           shift and go to state 5
+    pointer                        shift and go to state 7
+    user_types                     shift and go to state 8
+    primitive_types                shift and go to state 9
+
+state 1
+
+    (0) S' -> program .
+
+
+
+state 2
+
+    (1) program -> function_signature . SEMICOLON program
+    (14) function -> function_signature . command_block
+    (5) command_block -> . LBRACE RBRACE
+    (6) command_block -> . LBRACE command_list RBRACE
+
+    SEMICOLON       shift and go to state 18
+    LBRACE          shift and go to state 20
+
+    command_block                  shift and go to state 19
+
+state 3
+
+    (2) program -> variable_declaration . SEMICOLON program
+
+    SEMICOLON       shift and go to state 21
+
+
+state 4
+
+    (3) program -> function . program
+    (1) program -> . function_signature SEMICOLON program
+    (2) program -> . variable_declaration SEMICOLON program
+    (3) program -> . function program
+    (4) program -> .
+    (15) function_signature -> . type IDENTIFIER LPAREN signature_param_list RPAREN
+    (16) function_signature -> . pointer IDENTIFIER LPAREN signature_param_list RPAREN
+    (17) function_signature -> . type IDENTIFIER LPAREN RPAREN
+    (18) function_signature -> . pointer IDENTIFIER LPAREN RPAREN
+    (34) variable_declaration -> . type IDENTIFIER
+    (35) variable_declaration -> . pointer IDENTIFIER
+    (14) function -> . function_signature command_block
+    (37) type -> . user_types
+    (38) type -> . primitive_types
+    (36) pointer -> . type multiple_times
+    (39) user_types -> . IDENTIFIER
+    (40) user_types -> . KEYWORD_STRUCT IDENTIFIER
+    (41) primitive_types -> . TYPE_CHAR
+    (42) primitive_types -> . TYPE_INT
+    (43) primitive_types -> . TYPE_SHORT
+    (44) primitive_types -> . TYPE_LONG
+    (45) primitive_types -> . TYPE_FLOAT
+    (46) primitive_types -> . TYPE_DOUBLE
+    (47) primitive_types -> . TYPE_VOID
+
+    $end            reduce using rule 4 (program -> .)
+    IDENTIFIER      shift and go to state 6
+    KEYWORD_STRUCT  shift and go to state 10
+    TYPE_CHAR       shift and go to state 11
+    TYPE_INT        shift and go to state 12
+    TYPE_SHORT      shift and go to state 13
+    TYPE_LONG       shift and go to state 14
+    TYPE_FLOAT      shift and go to state 15
+    TYPE_DOUBLE     shift and go to state 16
+    TYPE_VOID       shift and go to state 17
+
+    function                       shift and go to state 4
+    program                        shift and go to state 22
+    function_signature             shift and go to state 2
+    variable_declaration           shift and go to state 3
+    type                           shift and go to state 5
+    pointer                        shift and go to state 7
+    user_types                     shift and go to state 8
+    primitive_types                shift and go to state 9
+
+state 5
+
+    (15) function_signature -> type . IDENTIFIER LPAREN signature_param_list RPAREN
+    (17) function_signature -> type . IDENTIFIER LPAREN RPAREN
+    (34) variable_declaration -> type . IDENTIFIER
+    (36) pointer -> type . multiple_times
+    (48) multiple_times -> . TIMES multiple_times
+    (49) multiple_times -> . TIMES
+
+    IDENTIFIER      shift and go to state 23
+    TIMES           shift and go to state 25
+
+    multiple_times                 shift and go to state 24
+
+state 6
+
+    (39) user_types -> IDENTIFIER .
+
+    IDENTIFIER      reduce using rule 39 (user_types -> IDENTIFIER .)
+    TIMES           reduce using rule 39 (user_types -> IDENTIFIER .)
+    LBRACKET        reduce using rule 39 (user_types -> IDENTIFIER .)
+    COMMA           reduce using rule 39 (user_types -> IDENTIFIER .)
+    RPAREN          reduce using rule 39 (user_types -> IDENTIFIER .)
+
+
+state 7
+
+    (16) function_signature -> pointer . IDENTIFIER LPAREN signature_param_list RPAREN
+    (18) function_signature -> pointer . IDENTIFIER LPAREN RPAREN
+    (35) variable_declaration -> pointer . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 26
+
+
+state 8
+
+    (37) type -> user_types .
+
+    IDENTIFIER      reduce using rule 37 (type -> user_types .)
+    TIMES           reduce using rule 37 (type -> user_types .)
+    LBRACKET        reduce using rule 37 (type -> user_types .)
+    COMMA           reduce using rule 37 (type -> user_types .)
+    RPAREN          reduce using rule 37 (type -> user_types .)
+
+
+state 9
+
+    (38) type -> primitive_types .
+
+    IDENTIFIER      reduce using rule 38 (type -> primitive_types .)
+    TIMES           reduce using rule 38 (type -> primitive_types .)
+    LBRACKET        reduce using rule 38 (type -> primitive_types .)
+    COMMA           reduce using rule 38 (type -> primitive_types .)
+    RPAREN          reduce using rule 38 (type -> primitive_types .)
+
+
+state 10
+
+    (40) user_types -> KEYWORD_STRUCT . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 27
+
+
+state 11
+
+    (41) primitive_types -> TYPE_CHAR .
+
+    IDENTIFIER      reduce using rule 41 (primitive_types -> TYPE_CHAR .)
+    TIMES           reduce using rule 41 (primitive_types -> TYPE_CHAR .)
+    LBRACKET        reduce using rule 41 (primitive_types -> TYPE_CHAR .)
+    COMMA           reduce using rule 41 (primitive_types -> TYPE_CHAR .)
+    RPAREN          reduce using rule 41 (primitive_types -> TYPE_CHAR .)
+
+
+state 12
+
+    (42) primitive_types -> TYPE_INT .
+
+    IDENTIFIER      reduce using rule 42 (primitive_types -> TYPE_INT .)
+    TIMES           reduce using rule 42 (primitive_types -> TYPE_INT .)
+    LBRACKET        reduce using rule 42 (primitive_types -> TYPE_INT .)
+    COMMA           reduce using rule 42 (primitive_types -> TYPE_INT .)
+    RPAREN          reduce using rule 42 (primitive_types -> TYPE_INT .)
+
+
+state 13
+
+    (43) primitive_types -> TYPE_SHORT .
+
+    IDENTIFIER      reduce using rule 43 (primitive_types -> TYPE_SHORT .)
+    TIMES           reduce using rule 43 (primitive_types -> TYPE_SHORT .)
+    LBRACKET        reduce using rule 43 (primitive_types -> TYPE_SHORT .)
+    COMMA           reduce using rule 43 (primitive_types -> TYPE_SHORT .)
+    RPAREN          reduce using rule 43 (primitive_types -> TYPE_SHORT .)
+
+
+state 14
+
+    (44) primitive_types -> TYPE_LONG .
+
+    IDENTIFIER      reduce using rule 44 (primitive_types -> TYPE_LONG .)
+    TIMES           reduce using rule 44 (primitive_types -> TYPE_LONG .)
+    LBRACKET        reduce using rule 44 (primitive_types -> TYPE_LONG .)
+    COMMA           reduce using rule 44 (primitive_types -> TYPE_LONG .)
+    RPAREN          reduce using rule 44 (primitive_types -> TYPE_LONG .)
+
+
+state 15
+
+    (45) primitive_types -> TYPE_FLOAT .
+
+    IDENTIFIER      reduce using rule 45 (primitive_types -> TYPE_FLOAT .)
+    TIMES           reduce using rule 45 (primitive_types -> TYPE_FLOAT .)
+    LBRACKET        reduce using rule 45 (primitive_types -> TYPE_FLOAT .)
+    COMMA           reduce using rule 45 (primitive_types -> TYPE_FLOAT .)
+    RPAREN          reduce using rule 45 (primitive_types -> TYPE_FLOAT .)
+
+
+state 16
+
+    (46) primitive_types -> TYPE_DOUBLE .
+
+    IDENTIFIER      reduce using rule 46 (primitive_types -> TYPE_DOUBLE .)
+    TIMES           reduce using rule 46 (primitive_types -> TYPE_DOUBLE .)
+    LBRACKET        reduce using rule 46 (primitive_types -> TYPE_DOUBLE .)
+    COMMA           reduce using rule 46 (primitive_types -> TYPE_DOUBLE .)
+    RPAREN          reduce using rule 46 (primitive_types -> TYPE_DOUBLE .)
+
+
+state 17
+
+    (47) primitive_types -> TYPE_VOID .
+
+    IDENTIFIER      reduce using rule 47 (primitive_types -> TYPE_VOID .)
+    TIMES           reduce using rule 47 (primitive_types -> TYPE_VOID .)
+    LBRACKET        reduce using rule 47 (primitive_types -> TYPE_VOID .)
+    COMMA           reduce using rule 47 (primitive_types -> TYPE_VOID .)
+    RPAREN          reduce using rule 47 (primitive_types -> TYPE_VOID .)
+
+
+state 18
+
+    (1) program -> function_signature SEMICOLON . program
+    (1) program -> . function_signature SEMICOLON program
+    (2) program -> . variable_declaration SEMICOLON program
+    (3) program -> . function program
+    (4) program -> .
+    (15) function_signature -> . type IDENTIFIER LPAREN signature_param_list RPAREN
+    (16) function_signature -> . pointer IDENTIFIER LPAREN signature_param_list RPAREN
+    (17) function_signature -> . type IDENTIFIER LPAREN RPAREN
+    (18) function_signature -> . pointer IDENTIFIER LPAREN RPAREN
+    (34) variable_declaration -> . type IDENTIFIER
+    (35) variable_declaration -> . pointer IDENTIFIER
+    (14) function -> . function_signature command_block
+    (37) type -> . user_types
+    (38) type -> . primitive_types
+    (36) pointer -> . type multiple_times
+    (39) user_types -> . IDENTIFIER
+    (40) user_types -> . KEYWORD_STRUCT IDENTIFIER
+    (41) primitive_types -> . TYPE_CHAR
+    (42) primitive_types -> . TYPE_INT
+    (43) primitive_types -> . TYPE_SHORT
+    (44) primitive_types -> . TYPE_LONG
+    (45) primitive_types -> . TYPE_FLOAT
+    (46) primitive_types -> . TYPE_DOUBLE
+    (47) primitive_types -> . TYPE_VOID
+
+    $end            reduce using rule 4 (program -> .)
+    IDENTIFIER      shift and go to state 6
+    KEYWORD_STRUCT  shift and go to state 10
+    TYPE_CHAR       shift and go to state 11
+    TYPE_INT        shift and go to state 12
+    TYPE_SHORT      shift and go to state 13
+    TYPE_LONG       shift and go to state 14
+    TYPE_FLOAT      shift and go to state 15
+    TYPE_DOUBLE     shift and go to state 16
+    TYPE_VOID       shift and go to state 17
+
+    function_signature             shift and go to state 2
+    program                        shift and go to state 28
+    variable_declaration           shift and go to state 3
+    function                       shift and go to state 4
+    type                           shift and go to state 5
+    pointer                        shift and go to state 7
+    user_types                     shift and go to state 8
+    primitive_types                shift and go to state 9
+
+state 19
+
+    (14) function -> function_signature command_block .
+
+    IDENTIFIER      reduce using rule 14 (function -> function_signature command_block .)
+    KEYWORD_STRUCT  reduce using rule 14 (function -> function_signature command_block .)
+    TYPE_CHAR       reduce using rule 14 (function -> function_signature command_block .)
+    TYPE_INT        reduce using rule 14 (function -> function_signature command_block .)
+    TYPE_SHORT      reduce using rule 14 (function -> function_signature command_block .)
+    TYPE_LONG       reduce using rule 14 (function -> function_signature command_block .)
+    TYPE_FLOAT      reduce using rule 14 (function -> function_signature command_block .)
+    TYPE_DOUBLE     reduce using rule 14 (function -> function_signature command_block .)
+    TYPE_VOID       reduce using rule 14 (function -> function_signature command_block .)
+    $end            reduce using rule 14 (function -> function_signature command_block .)
+
+
+state 20
+
+    (5) command_block -> LBRACE . RBRACE
+    (6) command_block -> LBRACE . command_list RBRACE
+    (7) command_list -> . command command_list
+    (8) command_list -> . command
+    (9) command -> . variable_declaration SEMICOLON
+    (10) command -> . variable_declaration ASSIGN expression SEMICOLON
+    (11) command -> . IDENTIFIER ASSIGN expression SEMICOLON
+    (12) command -> . expression SEMICOLON
+    (13) command -> . SEMICOLON
+    (34) variable_declaration -> . type IDENTIFIER
+    (35) variable_declaration -> . pointer IDENTIFIER
+    (54) expression -> . and_assign_bitwise_operator
+    (37) type -> . user_types
+    (38) type -> . primitive_types
+    (36) pointer -> . type multiple_times
+    (55) and_assign_bitwise_operator -> . xor_assign_bitwise_operator BITWISE_AND_ASSIGN and_assign_bitwise_operator
+    (56) and_assign_bitwise_operator -> . xor_assign_bitwise_operator
+    (39) user_types -> . IDENTIFIER
+    (40) user_types -> . KEYWORD_STRUCT IDENTIFIER
+    (41) primitive_types -> . TYPE_CHAR
+    (42) primitive_types -> . TYPE_INT
+    (43) primitive_types -> . TYPE_SHORT
+    (44) primitive_types -> . TYPE_LONG
+    (45) primitive_types -> . TYPE_FLOAT
+    (46) primitive_types -> . TYPE_DOUBLE
+    (47) primitive_types -> . TYPE_VOID
+    (57) xor_assign_bitwise_operator -> . or_assign_bitwise_operator BITWISE_XOR_ASSIGN xor_assign_bitwise_operator
+    (58) xor_assign_bitwise_operator -> . or_assign_bitwise_operator
+    (59) or_assign_bitwise_operator -> . or_assign_bitwise_operator BITWISE_OR_ASSIGN left_shift_bitwise_assign
+    (60) or_assign_bitwise_operator -> . left_shift_bitwise_assign
+    (61) left_shift_bitwise_assign -> . IDENTIFIER
+    (62) left_shift_bitwise_assign -> . integer_number
+    (50) integer_number -> . NUMBER
+    (51) integer_number -> . BINARY_NUMBER
+    (52) integer_number -> . HEXADECIMAL_NUMBER
+    (53) integer_number -> . OCTAL_NUMBER
+
+    RBRACE          shift and go to state 29
+    IDENTIFIER      shift and go to state 35
+    SEMICOLON       shift and go to state 33
+    KEYWORD_STRUCT  shift and go to state 10
+    TYPE_CHAR       shift and go to state 11
+    TYPE_INT        shift and go to state 12
+    TYPE_SHORT      shift and go to state 13
+    TYPE_LONG       shift and go to state 14
+    TYPE_FLOAT      shift and go to state 15
+    TYPE_DOUBLE     shift and go to state 16
+    TYPE_VOID       shift and go to state 17
+    NUMBER          shift and go to state 43
+    BINARY_NUMBER   shift and go to state 44
+    HEXADECIMAL_NUMBER shift and go to state 45
+    OCTAL_NUMBER    shift and go to state 46
+
+    command_list                   shift and go to state 30
+    command                        shift and go to state 31
+    variable_declaration           shift and go to state 32
+    expression                     shift and go to state 34
+    type                           shift and go to state 36
+    pointer                        shift and go to state 37
+    and_assign_bitwise_operator    shift and go to state 38
+    user_types                     shift and go to state 8
+    primitive_types                shift and go to state 9
+    xor_assign_bitwise_operator    shift and go to state 39
+    or_assign_bitwise_operator     shift and go to state 40
+    left_shift_bitwise_assign      shift and go to state 41
+    integer_number                 shift and go to state 42
+
+state 21
+
+    (2) program -> variable_declaration SEMICOLON . program
+    (1) program -> . function_signature SEMICOLON program
+    (2) program -> . variable_declaration SEMICOLON program
+    (3) program -> . function program
+    (4) program -> .
+    (15) function_signature -> . type IDENTIFIER LPAREN signature_param_list RPAREN
+    (16) function_signature -> . pointer IDENTIFIER LPAREN signature_param_list RPAREN
+    (17) function_signature -> . type IDENTIFIER LPAREN RPAREN
+    (18) function_signature -> . pointer IDENTIFIER LPAREN RPAREN
+    (34) variable_declaration -> . type IDENTIFIER
+    (35) variable_declaration -> . pointer IDENTIFIER
+    (14) function -> . function_signature command_block
+    (37) type -> . user_types
+    (38) type -> . primitive_types
+    (36) pointer -> . type multiple_times
+    (39) user_types -> . IDENTIFIER
+    (40) user_types -> . KEYWORD_STRUCT IDENTIFIER
+    (41) primitive_types -> . TYPE_CHAR
+    (42) primitive_types -> . TYPE_INT
+    (43) primitive_types -> . TYPE_SHORT
+    (44) primitive_types -> . TYPE_LONG
+    (45) primitive_types -> . TYPE_FLOAT
+    (46) primitive_types -> . TYPE_DOUBLE
+    (47) primitive_types -> . TYPE_VOID
+
+    $end            reduce using rule 4 (program -> .)
+    IDENTIFIER      shift and go to state 6
+    KEYWORD_STRUCT  shift and go to state 10
+    TYPE_CHAR       shift and go to state 11
+    TYPE_INT        shift and go to state 12
+    TYPE_SHORT      shift and go to state 13
+    TYPE_LONG       shift and go to state 14
+    TYPE_FLOAT      shift and go to state 15
+    TYPE_DOUBLE     shift and go to state 16
+    TYPE_VOID       shift and go to state 17
+
+    variable_declaration           shift and go to state 3
+    program                        shift and go to state 47
+    function_signature             shift and go to state 2
+    function                       shift and go to state 4
+    type                           shift and go to state 5
+    pointer                        shift and go to state 7
+    user_types                     shift and go to state 8
+    primitive_types                shift and go to state 9
+
+state 22
+
+    (3) program -> function program .
+
+    $end            reduce using rule 3 (program -> function program .)
+
+
+state 23
+
+    (15) function_signature -> type IDENTIFIER . LPAREN signature_param_list RPAREN
+    (17) function_signature -> type IDENTIFIER . LPAREN RPAREN
+    (34) variable_declaration -> type IDENTIFIER .
+
+    LPAREN          shift and go to state 48
+    SEMICOLON       reduce using rule 34 (variable_declaration -> type IDENTIFIER .)
+
+
+state 24
+
+    (36) pointer -> type multiple_times .
+
+    IDENTIFIER      reduce using rule 36 (pointer -> type multiple_times .)
+    LBRACKET        reduce using rule 36 (pointer -> type multiple_times .)
+    COMMA           reduce using rule 36 (pointer -> type multiple_times .)
+    RPAREN          reduce using rule 36 (pointer -> type multiple_times .)
+
+
+state 25
+
+    (48) multiple_times -> TIMES . multiple_times
+    (49) multiple_times -> TIMES .
+    (48) multiple_times -> . TIMES multiple_times
+    (49) multiple_times -> . TIMES
+
+    IDENTIFIER      reduce using rule 49 (multiple_times -> TIMES .)
+    LBRACKET        reduce using rule 49 (multiple_times -> TIMES .)
+    COMMA           reduce using rule 49 (multiple_times -> TIMES .)
+    RPAREN          reduce using rule 49 (multiple_times -> TIMES .)
+    TIMES           shift and go to state 25
+
+    multiple_times                 shift and go to state 49
+
+state 26
+
+    (16) function_signature -> pointer IDENTIFIER . LPAREN signature_param_list RPAREN
+    (18) function_signature -> pointer IDENTIFIER . LPAREN RPAREN
+    (35) variable_declaration -> pointer IDENTIFIER .
+
+    LPAREN          shift and go to state 50
+    SEMICOLON       reduce using rule 35 (variable_declaration -> pointer IDENTIFIER .)
+
+
+state 27
+
+    (40) user_types -> KEYWORD_STRUCT IDENTIFIER .
+
+    IDENTIFIER      reduce using rule 40 (user_types -> KEYWORD_STRUCT IDENTIFIER .)
+    TIMES           reduce using rule 40 (user_types -> KEYWORD_STRUCT IDENTIFIER .)
+    LBRACKET        reduce using rule 40 (user_types -> KEYWORD_STRUCT IDENTIFIER .)
+    COMMA           reduce using rule 40 (user_types -> KEYWORD_STRUCT IDENTIFIER .)
+    RPAREN          reduce using rule 40 (user_types -> KEYWORD_STRUCT IDENTIFIER .)
+
+
+state 28
+
+    (1) program -> function_signature SEMICOLON program .
+
+    $end            reduce using rule 1 (program -> function_signature SEMICOLON program .)
+
+
+state 29
+
+    (5) command_block -> LBRACE RBRACE .
+
+    IDENTIFIER      reduce using rule 5 (command_block -> LBRACE RBRACE .)
+    KEYWORD_STRUCT  reduce using rule 5 (command_block -> LBRACE RBRACE .)
+    TYPE_CHAR       reduce using rule 5 (command_block -> LBRACE RBRACE .)
+    TYPE_INT        reduce using rule 5 (command_block -> LBRACE RBRACE .)
+    TYPE_SHORT      reduce using rule 5 (command_block -> LBRACE RBRACE .)
+    TYPE_LONG       reduce using rule 5 (command_block -> LBRACE RBRACE .)
+    TYPE_FLOAT      reduce using rule 5 (command_block -> LBRACE RBRACE .)
+    TYPE_DOUBLE     reduce using rule 5 (command_block -> LBRACE RBRACE .)
+    TYPE_VOID       reduce using rule 5 (command_block -> LBRACE RBRACE .)
+    $end            reduce using rule 5 (command_block -> LBRACE RBRACE .)
+
+
+state 30
+
+    (6) command_block -> LBRACE command_list . RBRACE
+
+    RBRACE          shift and go to state 51
+
+
+state 31
+
+    (7) command_list -> command . command_list
+    (8) command_list -> command .
+    (7) command_list -> . command command_list
+    (8) command_list -> . command
+    (9) command -> . variable_declaration SEMICOLON
+    (10) command -> . variable_declaration ASSIGN expression SEMICOLON
+    (11) command -> . IDENTIFIER ASSIGN expression SEMICOLON
+    (12) command -> . expression SEMICOLON
+    (13) command -> . SEMICOLON
+    (34) variable_declaration -> . type IDENTIFIER
+    (35) variable_declaration -> . pointer IDENTIFIER
+    (54) expression -> . and_assign_bitwise_operator
+    (37) type -> . user_types
+    (38) type -> . primitive_types
+    (36) pointer -> . type multiple_times
+    (55) and_assign_bitwise_operator -> . xor_assign_bitwise_operator BITWISE_AND_ASSIGN and_assign_bitwise_operator
+    (56) and_assign_bitwise_operator -> . xor_assign_bitwise_operator
+    (39) user_types -> . IDENTIFIER
+    (40) user_types -> . KEYWORD_STRUCT IDENTIFIER
+    (41) primitive_types -> . TYPE_CHAR
+    (42) primitive_types -> . TYPE_INT
+    (43) primitive_types -> . TYPE_SHORT
+    (44) primitive_types -> . TYPE_LONG
+    (45) primitive_types -> . TYPE_FLOAT
+    (46) primitive_types -> . TYPE_DOUBLE
+    (47) primitive_types -> . TYPE_VOID
+    (57) xor_assign_bitwise_operator -> . or_assign_bitwise_operator BITWISE_XOR_ASSIGN xor_assign_bitwise_operator
+    (58) xor_assign_bitwise_operator -> . or_assign_bitwise_operator
+    (59) or_assign_bitwise_operator -> . or_assign_bitwise_operator BITWISE_OR_ASSIGN left_shift_bitwise_assign
+    (60) or_assign_bitwise_operator -> . left_shift_bitwise_assign
+    (61) left_shift_bitwise_assign -> . IDENTIFIER
+    (62) left_shift_bitwise_assign -> . integer_number
+    (50) integer_number -> . NUMBER
+    (51) integer_number -> . BINARY_NUMBER
+    (52) integer_number -> . HEXADECIMAL_NUMBER
+    (53) integer_number -> . OCTAL_NUMBER
+
+    RBRACE          reduce using rule 8 (command_list -> command .)
+    IDENTIFIER      shift and go to state 35
+    SEMICOLON       shift and go to state 33
+    KEYWORD_STRUCT  shift and go to state 10
+    TYPE_CHAR       shift and go to state 11
+    TYPE_INT        shift and go to state 12
+    TYPE_SHORT      shift and go to state 13
+    TYPE_LONG       shift and go to state 14
+    TYPE_FLOAT      shift and go to state 15
+    TYPE_DOUBLE     shift and go to state 16
+    TYPE_VOID       shift and go to state 17
+    NUMBER          shift and go to state 43
+    BINARY_NUMBER   shift and go to state 44
+    HEXADECIMAL_NUMBER shift and go to state 45
+    OCTAL_NUMBER    shift and go to state 46
+
+    command                        shift and go to state 31
+    command_list                   shift and go to state 52
+    variable_declaration           shift and go to state 32
+    expression                     shift and go to state 34
+    type                           shift and go to state 36
+    pointer                        shift and go to state 37
+    and_assign_bitwise_operator    shift and go to state 38
+    user_types                     shift and go to state 8
+    primitive_types                shift and go to state 9
+    xor_assign_bitwise_operator    shift and go to state 39
+    or_assign_bitwise_operator     shift and go to state 40
+    left_shift_bitwise_assign      shift and go to state 41
+    integer_number                 shift and go to state 42
+
+state 32
+
+    (9) command -> variable_declaration . SEMICOLON
+    (10) command -> variable_declaration . ASSIGN expression SEMICOLON
+
+    SEMICOLON       shift and go to state 53
+    ASSIGN          shift and go to state 54
+
+
+state 33
+
+    (13) command -> SEMICOLON .
+
+    IDENTIFIER      reduce using rule 13 (command -> SEMICOLON .)
+    SEMICOLON       reduce using rule 13 (command -> SEMICOLON .)
+    KEYWORD_STRUCT  reduce using rule 13 (command -> SEMICOLON .)
+    TYPE_CHAR       reduce using rule 13 (command -> SEMICOLON .)
+    TYPE_INT        reduce using rule 13 (command -> SEMICOLON .)
+    TYPE_SHORT      reduce using rule 13 (command -> SEMICOLON .)
+    TYPE_LONG       reduce using rule 13 (command -> SEMICOLON .)
+    TYPE_FLOAT      reduce using rule 13 (command -> SEMICOLON .)
+    TYPE_DOUBLE     reduce using rule 13 (command -> SEMICOLON .)
+    TYPE_VOID       reduce using rule 13 (command -> SEMICOLON .)
+    NUMBER          reduce using rule 13 (command -> SEMICOLON .)
+    BINARY_NUMBER   reduce using rule 13 (command -> SEMICOLON .)
+    HEXADECIMAL_NUMBER reduce using rule 13 (command -> SEMICOLON .)
+    OCTAL_NUMBER    reduce using rule 13 (command -> SEMICOLON .)
+    RBRACE          reduce using rule 13 (command -> SEMICOLON .)
+
+
+state 34
+
+    (12) command -> expression . SEMICOLON
+
+    SEMICOLON       shift and go to state 55
+
+
+state 35
+
+    (11) command -> IDENTIFIER . ASSIGN expression SEMICOLON
+    (39) user_types -> IDENTIFIER .
+    (61) left_shift_bitwise_assign -> IDENTIFIER .
+
+    ASSIGN          shift and go to state 56
+    IDENTIFIER      reduce using rule 39 (user_types -> IDENTIFIER .)
+    TIMES           reduce using rule 39 (user_types -> IDENTIFIER .)
+    BITWISE_XOR_ASSIGN reduce using rule 61 (left_shift_bitwise_assign -> IDENTIFIER .)
+    BITWISE_OR_ASSIGN reduce using rule 61 (left_shift_bitwise_assign -> IDENTIFIER .)
+    BITWISE_AND_ASSIGN reduce using rule 61 (left_shift_bitwise_assign -> IDENTIFIER .)
+    SEMICOLON       reduce using rule 61 (left_shift_bitwise_assign -> IDENTIFIER .)
+
+
+state 36
+
+    (34) variable_declaration -> type . IDENTIFIER
+    (36) pointer -> type . multiple_times
+    (48) multiple_times -> . TIMES multiple_times
+    (49) multiple_times -> . TIMES
+
+    IDENTIFIER      shift and go to state 57
+    TIMES           shift and go to state 25
+
+    multiple_times                 shift and go to state 24
+
+state 37
+
+    (35) variable_declaration -> pointer . IDENTIFIER
+
+    IDENTIFIER      shift and go to state 58
+
+
+state 38
+
+    (54) expression -> and_assign_bitwise_operator .
+
+    SEMICOLON       reduce using rule 54 (expression -> and_assign_bitwise_operator .)
+
+
+state 39
+
+    (55) and_assign_bitwise_operator -> xor_assign_bitwise_operator . BITWISE_AND_ASSIGN and_assign_bitwise_operator
+    (56) and_assign_bitwise_operator -> xor_assign_bitwise_operator .
+
+    BITWISE_AND_ASSIGN shift and go to state 59
+    SEMICOLON       reduce using rule 56 (and_assign_bitwise_operator -> xor_assign_bitwise_operator .)
+
+
+state 40
+
+    (57) xor_assign_bitwise_operator -> or_assign_bitwise_operator . BITWISE_XOR_ASSIGN xor_assign_bitwise_operator
+    (58) xor_assign_bitwise_operator -> or_assign_bitwise_operator .
+    (59) or_assign_bitwise_operator -> or_assign_bitwise_operator . BITWISE_OR_ASSIGN left_shift_bitwise_assign
+
+    BITWISE_XOR_ASSIGN shift and go to state 60
+    BITWISE_AND_ASSIGN reduce using rule 58 (xor_assign_bitwise_operator -> or_assign_bitwise_operator .)
+    SEMICOLON       reduce using rule 58 (xor_assign_bitwise_operator -> or_assign_bitwise_operator .)
+    BITWISE_OR_ASSIGN shift and go to state 61
+
+
+state 41
+
+    (60) or_assign_bitwise_operator -> left_shift_bitwise_assign .
+
+    BITWISE_XOR_ASSIGN reduce using rule 60 (or_assign_bitwise_operator -> left_shift_bitwise_assign .)
+    BITWISE_OR_ASSIGN reduce using rule 60 (or_assign_bitwise_operator -> left_shift_bitwise_assign .)
+    BITWISE_AND_ASSIGN reduce using rule 60 (or_assign_bitwise_operator -> left_shift_bitwise_assign .)
+    SEMICOLON       reduce using rule 60 (or_assign_bitwise_operator -> left_shift_bitwise_assign .)
+
+
+state 42
+
+    (62) left_shift_bitwise_assign -> integer_number .
+
+    BITWISE_XOR_ASSIGN reduce using rule 62 (left_shift_bitwise_assign -> integer_number .)
+    BITWISE_OR_ASSIGN reduce using rule 62 (left_shift_bitwise_assign -> integer_number .)
+    BITWISE_AND_ASSIGN reduce using rule 62 (left_shift_bitwise_assign -> integer_number .)
+    SEMICOLON       reduce using rule 62 (left_shift_bitwise_assign -> integer_number .)
+
+
+state 43
+
+    (50) integer_number -> NUMBER .
+
+    BITWISE_XOR_ASSIGN reduce using rule 50 (integer_number -> NUMBER .)
+    BITWISE_OR_ASSIGN reduce using rule 50 (integer_number -> NUMBER .)
+    BITWISE_AND_ASSIGN reduce using rule 50 (integer_number -> NUMBER .)
+    SEMICOLON       reduce using rule 50 (integer_number -> NUMBER .)
+    RBRACKET        reduce using rule 50 (integer_number -> NUMBER .)
+
+
+state 44
+
+    (51) integer_number -> BINARY_NUMBER .
+
+    BITWISE_XOR_ASSIGN reduce using rule 51 (integer_number -> BINARY_NUMBER .)
+    BITWISE_OR_ASSIGN reduce using rule 51 (integer_number -> BINARY_NUMBER .)
+    BITWISE_AND_ASSIGN reduce using rule 51 (integer_number -> BINARY_NUMBER .)
+    SEMICOLON       reduce using rule 51 (integer_number -> BINARY_NUMBER .)
+    RBRACKET        reduce using rule 51 (integer_number -> BINARY_NUMBER .)
+
+
+state 45
+
+    (52) integer_number -> HEXADECIMAL_NUMBER .
+
+    BITWISE_XOR_ASSIGN reduce using rule 52 (integer_number -> HEXADECIMAL_NUMBER .)
+    BITWISE_OR_ASSIGN reduce using rule 52 (integer_number -> HEXADECIMAL_NUMBER .)
+    BITWISE_AND_ASSIGN reduce using rule 52 (integer_number -> HEXADECIMAL_NUMBER .)
+    SEMICOLON       reduce using rule 52 (integer_number -> HEXADECIMAL_NUMBER .)
+    RBRACKET        reduce using rule 52 (integer_number -> HEXADECIMAL_NUMBER .)
+
+
+state 46
+
+    (53) integer_number -> OCTAL_NUMBER .
+
+    BITWISE_XOR_ASSIGN reduce using rule 53 (integer_number -> OCTAL_NUMBER .)
+    BITWISE_OR_ASSIGN reduce using rule 53 (integer_number -> OCTAL_NUMBER .)
+    BITWISE_AND_ASSIGN reduce using rule 53 (integer_number -> OCTAL_NUMBER .)
+    SEMICOLON       reduce using rule 53 (integer_number -> OCTAL_NUMBER .)
+    RBRACKET        reduce using rule 53 (integer_number -> OCTAL_NUMBER .)
+
+
+state 47
+
+    (2) program -> variable_declaration SEMICOLON program .
+
+    $end            reduce using rule 2 (program -> variable_declaration SEMICOLON program .)
+
+
+state 48
+
+    (15) function_signature -> type IDENTIFIER LPAREN . signature_param_list RPAREN
+    (17) function_signature -> type IDENTIFIER LPAREN . RPAREN
+    (19) signature_param_list -> . signature_param COMMA signature_param
+    (20) signature_param_list -> . signature_param
+    (21) signature_param -> . type
+    (22) signature_param -> . pointer
+    (23) signature_param -> . type multiple_bracket_signature
+    (24) signature_param -> . pointer multiple_bracket_signature
+    (25) signature_param -> . variable_declaration
+    (26) signature_param -> . variable_declaration multiple_bracket_signature
+    (37) type -> . user_types
+    (38) type -> . primitive_types
+    (36) pointer -> . type multiple_times
+    (34) variable_declaration -> . type IDENTIFIER
+    (35) variable_declaration -> . pointer IDENTIFIER
+    (39) user_types -> . IDENTIFIER
+    (40) user_types -> . KEYWORD_STRUCT IDENTIFIER
+    (41) primitive_types -> . TYPE_CHAR
+    (42) primitive_types -> . TYPE_INT
+    (43) primitive_types -> . TYPE_SHORT
+    (44) primitive_types -> . TYPE_LONG
+    (45) primitive_types -> . TYPE_FLOAT
+    (46) primitive_types -> . TYPE_DOUBLE
+    (47) primitive_types -> . TYPE_VOID
+
+    RPAREN          shift and go to state 64
+    IDENTIFIER      shift and go to state 6
+    KEYWORD_STRUCT  shift and go to state 10
+    TYPE_CHAR       shift and go to state 11
+    TYPE_INT        shift and go to state 12
+    TYPE_SHORT      shift and go to state 13
+    TYPE_LONG       shift and go to state 14
+    TYPE_FLOAT      shift and go to state 15
+    TYPE_DOUBLE     shift and go to state 16
+    TYPE_VOID       shift and go to state 17
+
+    type                           shift and go to state 62
+    signature_param_list           shift and go to state 63
+    signature_param                shift and go to state 65
+    pointer                        shift and go to state 66
+    variable_declaration           shift and go to state 67
+    user_types                     shift and go to state 8
+    primitive_types                shift and go to state 9
+
+state 49
+
+    (48) multiple_times -> TIMES multiple_times .
+
+    IDENTIFIER      reduce using rule 48 (multiple_times -> TIMES multiple_times .)
+    LBRACKET        reduce using rule 48 (multiple_times -> TIMES multiple_times .)
+    COMMA           reduce using rule 48 (multiple_times -> TIMES multiple_times .)
+    RPAREN          reduce using rule 48 (multiple_times -> TIMES multiple_times .)
+
+
+state 50
+
+    (16) function_signature -> pointer IDENTIFIER LPAREN . signature_param_list RPAREN
+    (18) function_signature -> pointer IDENTIFIER LPAREN . RPAREN
+    (19) signature_param_list -> . signature_param COMMA signature_param
+    (20) signature_param_list -> . signature_param
+    (21) signature_param -> . type
+    (22) signature_param -> . pointer
+    (23) signature_param -> . type multiple_bracket_signature
+    (24) signature_param -> . pointer multiple_bracket_signature
+    (25) signature_param -> . variable_declaration
+    (26) signature_param -> . variable_declaration multiple_bracket_signature
+    (37) type -> . user_types
+    (38) type -> . primitive_types
+    (36) pointer -> . type multiple_times
+    (34) variable_declaration -> . type IDENTIFIER
+    (35) variable_declaration -> . pointer IDENTIFIER
+    (39) user_types -> . IDENTIFIER
+    (40) user_types -> . KEYWORD_STRUCT IDENTIFIER
+    (41) primitive_types -> . TYPE_CHAR
+    (42) primitive_types -> . TYPE_INT
+    (43) primitive_types -> . TYPE_SHORT
+    (44) primitive_types -> . TYPE_LONG
+    (45) primitive_types -> . TYPE_FLOAT
+    (46) primitive_types -> . TYPE_DOUBLE
+    (47) primitive_types -> . TYPE_VOID
+
+    RPAREN          shift and go to state 69
+    IDENTIFIER      shift and go to state 6
+    KEYWORD_STRUCT  shift and go to state 10
+    TYPE_CHAR       shift and go to state 11
+    TYPE_INT        shift and go to state 12
+    TYPE_SHORT      shift and go to state 13
+    TYPE_LONG       shift and go to state 14
+    TYPE_FLOAT      shift and go to state 15
+    TYPE_DOUBLE     shift and go to state 16
+    TYPE_VOID       shift and go to state 17
+
+    pointer                        shift and go to state 66
+    signature_param_list           shift and go to state 68
+    signature_param                shift and go to state 65
+    type                           shift and go to state 62
+    variable_declaration           shift and go to state 67
+    user_types                     shift and go to state 8
+    primitive_types                shift and go to state 9
+
+state 51
+
+    (6) command_block -> LBRACE command_list RBRACE .
+
+    IDENTIFIER      reduce using rule 6 (command_block -> LBRACE command_list RBRACE .)
+    KEYWORD_STRUCT  reduce using rule 6 (command_block -> LBRACE command_list RBRACE .)
+    TYPE_CHAR       reduce using rule 6 (command_block -> LBRACE command_list RBRACE .)
+    TYPE_INT        reduce using rule 6 (command_block -> LBRACE command_list RBRACE .)
+    TYPE_SHORT      reduce using rule 6 (command_block -> LBRACE command_list RBRACE .)
+    TYPE_LONG       reduce using rule 6 (command_block -> LBRACE command_list RBRACE .)
+    TYPE_FLOAT      reduce using rule 6 (command_block -> LBRACE command_list RBRACE .)
+    TYPE_DOUBLE     reduce using rule 6 (command_block -> LBRACE command_list RBRACE .)
+    TYPE_VOID       reduce using rule 6 (command_block -> LBRACE command_list RBRACE .)
+    $end            reduce using rule 6 (command_block -> LBRACE command_list RBRACE .)
+
+
+state 52
+
+    (7) command_list -> command command_list .
+
+    RBRACE          reduce using rule 7 (command_list -> command command_list .)
+
+
+state 53
+
+    (9) command -> variable_declaration SEMICOLON .
+
+    IDENTIFIER      reduce using rule 9 (command -> variable_declaration SEMICOLON .)
+    SEMICOLON       reduce using rule 9 (command -> variable_declaration SEMICOLON .)
+    KEYWORD_STRUCT  reduce using rule 9 (command -> variable_declaration SEMICOLON .)
+    TYPE_CHAR       reduce using rule 9 (command -> variable_declaration SEMICOLON .)
+    TYPE_INT        reduce using rule 9 (command -> variable_declaration SEMICOLON .)
+    TYPE_SHORT      reduce using rule 9 (command -> variable_declaration SEMICOLON .)
+    TYPE_LONG       reduce using rule 9 (command -> variable_declaration SEMICOLON .)
+    TYPE_FLOAT      reduce using rule 9 (command -> variable_declaration SEMICOLON .)
+    TYPE_DOUBLE     reduce using rule 9 (command -> variable_declaration SEMICOLON .)
+    TYPE_VOID       reduce using rule 9 (command -> variable_declaration SEMICOLON .)
+    NUMBER          reduce using rule 9 (command -> variable_declaration SEMICOLON .)
+    BINARY_NUMBER   reduce using rule 9 (command -> variable_declaration SEMICOLON .)
+    HEXADECIMAL_NUMBER reduce using rule 9 (command -> variable_declaration SEMICOLON .)
+    OCTAL_NUMBER    reduce using rule 9 (command -> variable_declaration SEMICOLON .)
+    RBRACE          reduce using rule 9 (command -> variable_declaration SEMICOLON .)
+
+
+state 54
+
+    (10) command -> variable_declaration ASSIGN . expression SEMICOLON
+    (54) expression -> . and_assign_bitwise_operator
+    (55) and_assign_bitwise_operator -> . xor_assign_bitwise_operator BITWISE_AND_ASSIGN and_assign_bitwise_operator
+    (56) and_assign_bitwise_operator -> . xor_assign_bitwise_operator
+    (57) xor_assign_bitwise_operator -> . or_assign_bitwise_operator BITWISE_XOR_ASSIGN xor_assign_bitwise_operator
+    (58) xor_assign_bitwise_operator -> . or_assign_bitwise_operator
+    (59) or_assign_bitwise_operator -> . or_assign_bitwise_operator BITWISE_OR_ASSIGN left_shift_bitwise_assign
+    (60) or_assign_bitwise_operator -> . left_shift_bitwise_assign
+    (61) left_shift_bitwise_assign -> . IDENTIFIER
+    (62) left_shift_bitwise_assign -> . integer_number
+    (50) integer_number -> . NUMBER
+    (51) integer_number -> . BINARY_NUMBER
+    (52) integer_number -> . HEXADECIMAL_NUMBER
+    (53) integer_number -> . OCTAL_NUMBER
+
+    IDENTIFIER      shift and go to state 71
+    NUMBER          shift and go to state 43
+    BINARY_NUMBER   shift and go to state 44
+    HEXADECIMAL_NUMBER shift and go to state 45
+    OCTAL_NUMBER    shift and go to state 46
+
+    expression                     shift and go to state 70
+    and_assign_bitwise_operator    shift and go to state 38
+    xor_assign_bitwise_operator    shift and go to state 39
+    or_assign_bitwise_operator     shift and go to state 40
+    left_shift_bitwise_assign      shift and go to state 41
+    integer_number                 shift and go to state 42
+
+state 55
+
+    (12) command -> expression SEMICOLON .
+
+    IDENTIFIER      reduce using rule 12 (command -> expression SEMICOLON .)
+    SEMICOLON       reduce using rule 12 (command -> expression SEMICOLON .)
+    KEYWORD_STRUCT  reduce using rule 12 (command -> expression SEMICOLON .)
+    TYPE_CHAR       reduce using rule 12 (command -> expression SEMICOLON .)
+    TYPE_INT        reduce using rule 12 (command -> expression SEMICOLON .)
+    TYPE_SHORT      reduce using rule 12 (command -> expression SEMICOLON .)
+    TYPE_LONG       reduce using rule 12 (command -> expression SEMICOLON .)
+    TYPE_FLOAT      reduce using rule 12 (command -> expression SEMICOLON .)
+    TYPE_DOUBLE     reduce using rule 12 (command -> expression SEMICOLON .)
+    TYPE_VOID       reduce using rule 12 (command -> expression SEMICOLON .)
+    NUMBER          reduce using rule 12 (command -> expression SEMICOLON .)
+    BINARY_NUMBER   reduce using rule 12 (command -> expression SEMICOLON .)
+    HEXADECIMAL_NUMBER reduce using rule 12 (command -> expression SEMICOLON .)
+    OCTAL_NUMBER    reduce using rule 12 (command -> expression SEMICOLON .)
+    RBRACE          reduce using rule 12 (command -> expression SEMICOLON .)
+
+
+state 56
+
+    (11) command -> IDENTIFIER ASSIGN . expression SEMICOLON
+    (54) expression -> . and_assign_bitwise_operator
+    (55) and_assign_bitwise_operator -> . xor_assign_bitwise_operator BITWISE_AND_ASSIGN and_assign_bitwise_operator
+    (56) and_assign_bitwise_operator -> . xor_assign_bitwise_operator
+    (57) xor_assign_bitwise_operator -> . or_assign_bitwise_operator BITWISE_XOR_ASSIGN xor_assign_bitwise_operator
+    (58) xor_assign_bitwise_operator -> . or_assign_bitwise_operator
+    (59) or_assign_bitwise_operator -> . or_assign_bitwise_operator BITWISE_OR_ASSIGN left_shift_bitwise_assign
+    (60) or_assign_bitwise_operator -> . left_shift_bitwise_assign
+    (61) left_shift_bitwise_assign -> . IDENTIFIER
+    (62) left_shift_bitwise_assign -> . integer_number
+    (50) integer_number -> . NUMBER
+    (51) integer_number -> . BINARY_NUMBER
+    (52) integer_number -> . HEXADECIMAL_NUMBER
+    (53) integer_number -> . OCTAL_NUMBER
+
+    IDENTIFIER      shift and go to state 71
+    NUMBER          shift and go to state 43
+    BINARY_NUMBER   shift and go to state 44
+    HEXADECIMAL_NUMBER shift and go to state 45
+    OCTAL_NUMBER    shift and go to state 46
+
+    expression                     shift and go to state 72
+    and_assign_bitwise_operator    shift and go to state 38
+    xor_assign_bitwise_operator    shift and go to state 39
+    or_assign_bitwise_operator     shift and go to state 40
+    left_shift_bitwise_assign      shift and go to state 41
+    integer_number                 shift and go to state 42
+
+state 57
+
+    (34) variable_declaration -> type IDENTIFIER .
+
+    SEMICOLON       reduce using rule 34 (variable_declaration -> type IDENTIFIER .)
+    ASSIGN          reduce using rule 34 (variable_declaration -> type IDENTIFIER .)
+    LBRACKET        reduce using rule 34 (variable_declaration -> type IDENTIFIER .)
+    COMMA           reduce using rule 34 (variable_declaration -> type IDENTIFIER .)
+    RPAREN          reduce using rule 34 (variable_declaration -> type IDENTIFIER .)
+
+
+state 58
+
+    (35) variable_declaration -> pointer IDENTIFIER .
+
+    SEMICOLON       reduce using rule 35 (variable_declaration -> pointer IDENTIFIER .)
+    ASSIGN          reduce using rule 35 (variable_declaration -> pointer IDENTIFIER .)
+    LBRACKET        reduce using rule 35 (variable_declaration -> pointer IDENTIFIER .)
+    COMMA           reduce using rule 35 (variable_declaration -> pointer IDENTIFIER .)
+    RPAREN          reduce using rule 35 (variable_declaration -> pointer IDENTIFIER .)
+
+
+state 59
+
+    (55) and_assign_bitwise_operator -> xor_assign_bitwise_operator BITWISE_AND_ASSIGN . and_assign_bitwise_operator
+    (55) and_assign_bitwise_operator -> . xor_assign_bitwise_operator BITWISE_AND_ASSIGN and_assign_bitwise_operator
+    (56) and_assign_bitwise_operator -> . xor_assign_bitwise_operator
+    (57) xor_assign_bitwise_operator -> . or_assign_bitwise_operator BITWISE_XOR_ASSIGN xor_assign_bitwise_operator
+    (58) xor_assign_bitwise_operator -> . or_assign_bitwise_operator
+    (59) or_assign_bitwise_operator -> . or_assign_bitwise_operator BITWISE_OR_ASSIGN left_shift_bitwise_assign
+    (60) or_assign_bitwise_operator -> . left_shift_bitwise_assign
+    (61) left_shift_bitwise_assign -> . IDENTIFIER
+    (62) left_shift_bitwise_assign -> . integer_number
+    (50) integer_number -> . NUMBER
+    (51) integer_number -> . BINARY_NUMBER
+    (52) integer_number -> . HEXADECIMAL_NUMBER
+    (53) integer_number -> . OCTAL_NUMBER
+
+    IDENTIFIER      shift and go to state 71
+    NUMBER          shift and go to state 43
+    BINARY_NUMBER   shift and go to state 44
+    HEXADECIMAL_NUMBER shift and go to state 45
+    OCTAL_NUMBER    shift and go to state 46
+
+    xor_assign_bitwise_operator    shift and go to state 39
+    and_assign_bitwise_operator    shift and go to state 73
+    or_assign_bitwise_operator     shift and go to state 40
+    left_shift_bitwise_assign      shift and go to state 41
+    integer_number                 shift and go to state 42
+
+state 60
+
+    (57) xor_assign_bitwise_operator -> or_assign_bitwise_operator BITWISE_XOR_ASSIGN . xor_assign_bitwise_operator
+    (57) xor_assign_bitwise_operator -> . or_assign_bitwise_operator BITWISE_XOR_ASSIGN xor_assign_bitwise_operator
+    (58) xor_assign_bitwise_operator -> . or_assign_bitwise_operator
+    (59) or_assign_bitwise_operator -> . or_assign_bitwise_operator BITWISE_OR_ASSIGN left_shift_bitwise_assign
+    (60) or_assign_bitwise_operator -> . left_shift_bitwise_assign
+    (61) left_shift_bitwise_assign -> . IDENTIFIER
+    (62) left_shift_bitwise_assign -> . integer_number
+    (50) integer_number -> . NUMBER
+    (51) integer_number -> . BINARY_NUMBER
+    (52) integer_number -> . HEXADECIMAL_NUMBER
+    (53) integer_number -> . OCTAL_NUMBER
+
+    IDENTIFIER      shift and go to state 71
+    NUMBER          shift and go to state 43
+    BINARY_NUMBER   shift and go to state 44
+    HEXADECIMAL_NUMBER shift and go to state 45
+    OCTAL_NUMBER    shift and go to state 46
+
+    or_assign_bitwise_operator     shift and go to state 40
+    xor_assign_bitwise_operator    shift and go to state 74
+    left_shift_bitwise_assign      shift and go to state 41
+    integer_number                 shift and go to state 42
+
+state 61
+
+    (59) or_assign_bitwise_operator -> or_assign_bitwise_operator BITWISE_OR_ASSIGN . left_shift_bitwise_assign
+    (61) left_shift_bitwise_assign -> . IDENTIFIER
+    (62) left_shift_bitwise_assign -> . integer_number
+    (50) integer_number -> . NUMBER
+    (51) integer_number -> . BINARY_NUMBER
+    (52) integer_number -> . HEXADECIMAL_NUMBER
+    (53) integer_number -> . OCTAL_NUMBER
+
+    IDENTIFIER      shift and go to state 71
+    NUMBER          shift and go to state 43
+    BINARY_NUMBER   shift and go to state 44
+    HEXADECIMAL_NUMBER shift and go to state 45
+    OCTAL_NUMBER    shift and go to state 46
+
+    left_shift_bitwise_assign      shift and go to state 75
+    integer_number                 shift and go to state 42
+
+state 62
+
+    (21) signature_param -> type .
+    (23) signature_param -> type . multiple_bracket_signature
+    (36) pointer -> type . multiple_times
+    (34) variable_declaration -> type . IDENTIFIER
+    (27) multiple_bracket_signature -> . LBRACKET RBRACKET multiple_bracket_with_bounds
+    (28) multiple_bracket_signature -> . multiple_bracket_with_bounds
+    (48) multiple_times -> . TIMES multiple_times
+    (49) multiple_times -> . TIMES
+    (29) multiple_bracket_with_bounds -> . bracket_with_bounds multiple_bracket_with_bounds
+    (30) multiple_bracket_with_bounds -> . bracket_with_bounds
+    (31) bracket_with_bounds -> . LBRACKET number_id RBRACKET
+
+    COMMA           reduce using rule 21 (signature_param -> type .)
+    RPAREN          reduce using rule 21 (signature_param -> type .)
+    IDENTIFIER      shift and go to state 57
+    LBRACKET        shift and go to state 77
+    TIMES           shift and go to state 25
+
+    multiple_bracket_signature     shift and go to state 76
+    multiple_times                 shift and go to state 24
+    multiple_bracket_with_bounds   shift and go to state 78
+    bracket_with_bounds            shift and go to state 79
+
+state 63
+
+    (15) function_signature -> type IDENTIFIER LPAREN signature_param_list . RPAREN
+
+    RPAREN          shift and go to state 80
+
+
+state 64
+
+    (17) function_signature -> type IDENTIFIER LPAREN RPAREN .
+
+    SEMICOLON       reduce using rule 17 (function_signature -> type IDENTIFIER LPAREN RPAREN .)
+    LBRACE          reduce using rule 17 (function_signature -> type IDENTIFIER LPAREN RPAREN .)
+
+
+state 65
+
+    (19) signature_param_list -> signature_param . COMMA signature_param
+    (20) signature_param_list -> signature_param .
+
+    COMMA           shift and go to state 81
+    RPAREN          reduce using rule 20 (signature_param_list -> signature_param .)
+
+
+state 66
+
+    (22) signature_param -> pointer .
+    (24) signature_param -> pointer . multiple_bracket_signature
+    (35) variable_declaration -> pointer . IDENTIFIER
+    (27) multiple_bracket_signature -> . LBRACKET RBRACKET multiple_bracket_with_bounds
+    (28) multiple_bracket_signature -> . multiple_bracket_with_bounds
+    (29) multiple_bracket_with_bounds -> . bracket_with_bounds multiple_bracket_with_bounds
+    (30) multiple_bracket_with_bounds -> . bracket_with_bounds
+    (31) bracket_with_bounds -> . LBRACKET number_id RBRACKET
+
+    COMMA           reduce using rule 22 (signature_param -> pointer .)
+    RPAREN          reduce using rule 22 (signature_param -> pointer .)
+    IDENTIFIER      shift and go to state 58
+    LBRACKET        shift and go to state 77
+
+    multiple_bracket_signature     shift and go to state 82
+    multiple_bracket_with_bounds   shift and go to state 78
+    bracket_with_bounds            shift and go to state 79
+
+state 67
+
+    (25) signature_param -> variable_declaration .
+    (26) signature_param -> variable_declaration . multiple_bracket_signature
+    (27) multiple_bracket_signature -> . LBRACKET RBRACKET multiple_bracket_with_bounds
+    (28) multiple_bracket_signature -> . multiple_bracket_with_bounds
+    (29) multiple_bracket_with_bounds -> . bracket_with_bounds multiple_bracket_with_bounds
+    (30) multiple_bracket_with_bounds -> . bracket_with_bounds
+    (31) bracket_with_bounds -> . LBRACKET number_id RBRACKET
+
+    COMMA           reduce using rule 25 (signature_param -> variable_declaration .)
+    RPAREN          reduce using rule 25 (signature_param -> variable_declaration .)
+    LBRACKET        shift and go to state 77
+
+    multiple_bracket_signature     shift and go to state 83
+    multiple_bracket_with_bounds   shift and go to state 78
+    bracket_with_bounds            shift and go to state 79
+
+state 68
+
+    (16) function_signature -> pointer IDENTIFIER LPAREN signature_param_list . RPAREN
+
+    RPAREN          shift and go to state 84
+
+
+state 69
+
+    (18) function_signature -> pointer IDENTIFIER LPAREN RPAREN .
+
+    SEMICOLON       reduce using rule 18 (function_signature -> pointer IDENTIFIER LPAREN RPAREN .)
+    LBRACE          reduce using rule 18 (function_signature -> pointer IDENTIFIER LPAREN RPAREN .)
+
+
+state 70
+
+    (10) command -> variable_declaration ASSIGN expression . SEMICOLON
+
+    SEMICOLON       shift and go to state 85
+
+
+state 71
+
+    (61) left_shift_bitwise_assign -> IDENTIFIER .
+
+    BITWISE_XOR_ASSIGN reduce using rule 61 (left_shift_bitwise_assign -> IDENTIFIER .)
+    BITWISE_OR_ASSIGN reduce using rule 61 (left_shift_bitwise_assign -> IDENTIFIER .)
+    BITWISE_AND_ASSIGN reduce using rule 61 (left_shift_bitwise_assign -> IDENTIFIER .)
+    SEMICOLON       reduce using rule 61 (left_shift_bitwise_assign -> IDENTIFIER .)
+
+
+state 72
+
+    (11) command -> IDENTIFIER ASSIGN expression . SEMICOLON
+
+    SEMICOLON       shift and go to state 86
+
+
+state 73
+
+    (55) and_assign_bitwise_operator -> xor_assign_bitwise_operator BITWISE_AND_ASSIGN and_assign_bitwise_operator .
+
+    SEMICOLON       reduce using rule 55 (and_assign_bitwise_operator -> xor_assign_bitwise_operator BITWISE_AND_ASSIGN and_assign_bitwise_operator .)
+
+
+state 74
+
+    (57) xor_assign_bitwise_operator -> or_assign_bitwise_operator BITWISE_XOR_ASSIGN xor_assign_bitwise_operator .
+
+    BITWISE_AND_ASSIGN reduce using rule 57 (xor_assign_bitwise_operator -> or_assign_bitwise_operator BITWISE_XOR_ASSIGN xor_assign_bitwise_operator .)
+    SEMICOLON       reduce using rule 57 (xor_assign_bitwise_operator -> or_assign_bitwise_operator BITWISE_XOR_ASSIGN xor_assign_bitwise_operator .)
+
+
+state 75
+
+    (59) or_assign_bitwise_operator -> or_assign_bitwise_operator BITWISE_OR_ASSIGN left_shift_bitwise_assign .
+
+    BITWISE_XOR_ASSIGN reduce using rule 59 (or_assign_bitwise_operator -> or_assign_bitwise_operator BITWISE_OR_ASSIGN left_shift_bitwise_assign .)
+    BITWISE_OR_ASSIGN reduce using rule 59 (or_assign_bitwise_operator -> or_assign_bitwise_operator BITWISE_OR_ASSIGN left_shift_bitwise_assign .)
+    BITWISE_AND_ASSIGN reduce using rule 59 (or_assign_bitwise_operator -> or_assign_bitwise_operator BITWISE_OR_ASSIGN left_shift_bitwise_assign .)
+    SEMICOLON       reduce using rule 59 (or_assign_bitwise_operator -> or_assign_bitwise_operator BITWISE_OR_ASSIGN left_shift_bitwise_assign .)
+
+
+state 76
+
+    (23) signature_param -> type multiple_bracket_signature .
+
+    COMMA           reduce using rule 23 (signature_param -> type multiple_bracket_signature .)
+    RPAREN          reduce using rule 23 (signature_param -> type multiple_bracket_signature .)
+
+
+state 77
+
+    (27) multiple_bracket_signature -> LBRACKET . RBRACKET multiple_bracket_with_bounds
+    (31) bracket_with_bounds -> LBRACKET . number_id RBRACKET
+    (32) number_id -> . IDENTIFIER
+    (33) number_id -> . integer_number
+    (50) integer_number -> . NUMBER
+    (51) integer_number -> . BINARY_NUMBER
+    (52) integer_number -> . HEXADECIMAL_NUMBER
+    (53) integer_number -> . OCTAL_NUMBER
+
+    RBRACKET        shift and go to state 87
+    IDENTIFIER      shift and go to state 89
+    NUMBER          shift and go to state 43
+    BINARY_NUMBER   shift and go to state 44
+    HEXADECIMAL_NUMBER shift and go to state 45
+    OCTAL_NUMBER    shift and go to state 46
+
+    number_id                      shift and go to state 88
+    integer_number                 shift and go to state 90
+
+state 78
+
+    (28) multiple_bracket_signature -> multiple_bracket_with_bounds .
+
+    COMMA           reduce using rule 28 (multiple_bracket_signature -> multiple_bracket_with_bounds .)
+    RPAREN          reduce using rule 28 (multiple_bracket_signature -> multiple_bracket_with_bounds .)
+
+
+state 79
+
+    (29) multiple_bracket_with_bounds -> bracket_with_bounds . multiple_bracket_with_bounds
+    (30) multiple_bracket_with_bounds -> bracket_with_bounds .
+    (29) multiple_bracket_with_bounds -> . bracket_with_bounds multiple_bracket_with_bounds
+    (30) multiple_bracket_with_bounds -> . bracket_with_bounds
+    (31) bracket_with_bounds -> . LBRACKET number_id RBRACKET
+
+    COMMA           reduce using rule 30 (multiple_bracket_with_bounds -> bracket_with_bounds .)
+    RPAREN          reduce using rule 30 (multiple_bracket_with_bounds -> bracket_with_bounds .)
+    LBRACKET        shift and go to state 92
+
+    bracket_with_bounds            shift and go to state 79
+    multiple_bracket_with_bounds   shift and go to state 91
+
+state 80
+
+    (15) function_signature -> type IDENTIFIER LPAREN signature_param_list RPAREN .
+
+    SEMICOLON       reduce using rule 15 (function_signature -> type IDENTIFIER LPAREN signature_param_list RPAREN .)
+    LBRACE          reduce using rule 15 (function_signature -> type IDENTIFIER LPAREN signature_param_list RPAREN .)
+
+
+state 81
+
+    (19) signature_param_list -> signature_param COMMA . signature_param
+    (21) signature_param -> . type
+    (22) signature_param -> . pointer
+    (23) signature_param -> . type multiple_bracket_signature
+    (24) signature_param -> . pointer multiple_bracket_signature
+    (25) signature_param -> . variable_declaration
+    (26) signature_param -> . variable_declaration multiple_bracket_signature
+    (37) type -> . user_types
+    (38) type -> . primitive_types
+    (36) pointer -> . type multiple_times
+    (34) variable_declaration -> . type IDENTIFIER
+    (35) variable_declaration -> . pointer IDENTIFIER
+    (39) user_types -> . IDENTIFIER
+    (40) user_types -> . KEYWORD_STRUCT IDENTIFIER
+    (41) primitive_types -> . TYPE_CHAR
+    (42) primitive_types -> . TYPE_INT
+    (43) primitive_types -> . TYPE_SHORT
+    (44) primitive_types -> . TYPE_LONG
+    (45) primitive_types -> . TYPE_FLOAT
+    (46) primitive_types -> . TYPE_DOUBLE
+    (47) primitive_types -> . TYPE_VOID
+
+    IDENTIFIER      shift and go to state 6
+    KEYWORD_STRUCT  shift and go to state 10
+    TYPE_CHAR       shift and go to state 11
+    TYPE_INT        shift and go to state 12
+    TYPE_SHORT      shift and go to state 13
+    TYPE_LONG       shift and go to state 14
+    TYPE_FLOAT      shift and go to state 15
+    TYPE_DOUBLE     shift and go to state 16
+    TYPE_VOID       shift and go to state 17
+
+    signature_param                shift and go to state 93
+    type                           shift and go to state 62
+    pointer                        shift and go to state 66
+    variable_declaration           shift and go to state 67
+    user_types                     shift and go to state 8
+    primitive_types                shift and go to state 9
+
+state 82
+
+    (24) signature_param -> pointer multiple_bracket_signature .
+
+    COMMA           reduce using rule 24 (signature_param -> pointer multiple_bracket_signature .)
+    RPAREN          reduce using rule 24 (signature_param -> pointer multiple_bracket_signature .)
+
+
+state 83
+
+    (26) signature_param -> variable_declaration multiple_bracket_signature .
+
+    COMMA           reduce using rule 26 (signature_param -> variable_declaration multiple_bracket_signature .)
+    RPAREN          reduce using rule 26 (signature_param -> variable_declaration multiple_bracket_signature .)
+
+
+state 84
+
+    (16) function_signature -> pointer IDENTIFIER LPAREN signature_param_list RPAREN .
+
+    SEMICOLON       reduce using rule 16 (function_signature -> pointer IDENTIFIER LPAREN signature_param_list RPAREN .)
+    LBRACE          reduce using rule 16 (function_signature -> pointer IDENTIFIER LPAREN signature_param_list RPAREN .)
+
+
+state 85
+
+    (10) command -> variable_declaration ASSIGN expression SEMICOLON .
+
+    IDENTIFIER      reduce using rule 10 (command -> variable_declaration ASSIGN expression SEMICOLON .)
+    SEMICOLON       reduce using rule 10 (command -> variable_declaration ASSIGN expression SEMICOLON .)
+    KEYWORD_STRUCT  reduce using rule 10 (command -> variable_declaration ASSIGN expression SEMICOLON .)
+    TYPE_CHAR       reduce using rule 10 (command -> variable_declaration ASSIGN expression SEMICOLON .)
+    TYPE_INT        reduce using rule 10 (command -> variable_declaration ASSIGN expression SEMICOLON .)
+    TYPE_SHORT      reduce using rule 10 (command -> variable_declaration ASSIGN expression SEMICOLON .)
+    TYPE_LONG       reduce using rule 10 (command -> variable_declaration ASSIGN expression SEMICOLON .)
+    TYPE_FLOAT      reduce using rule 10 (command -> variable_declaration ASSIGN expression SEMICOLON .)
+    TYPE_DOUBLE     reduce using rule 10 (command -> variable_declaration ASSIGN expression SEMICOLON .)
+    TYPE_VOID       reduce using rule 10 (command -> variable_declaration ASSIGN expression SEMICOLON .)
+    NUMBER          reduce using rule 10 (command -> variable_declaration ASSIGN expression SEMICOLON .)
+    BINARY_NUMBER   reduce using rule 10 (command -> variable_declaration ASSIGN expression SEMICOLON .)
+    HEXADECIMAL_NUMBER reduce using rule 10 (command -> variable_declaration ASSIGN expression SEMICOLON .)
+    OCTAL_NUMBER    reduce using rule 10 (command -> variable_declaration ASSIGN expression SEMICOLON .)
+    RBRACE          reduce using rule 10 (command -> variable_declaration ASSIGN expression SEMICOLON .)
+
+
+state 86
+
+    (11) command -> IDENTIFIER ASSIGN expression SEMICOLON .
+
+    IDENTIFIER      reduce using rule 11 (command -> IDENTIFIER ASSIGN expression SEMICOLON .)
+    SEMICOLON       reduce using rule 11 (command -> IDENTIFIER ASSIGN expression SEMICOLON .)
+    KEYWORD_STRUCT  reduce using rule 11 (command -> IDENTIFIER ASSIGN expression SEMICOLON .)
+    TYPE_CHAR       reduce using rule 11 (command -> IDENTIFIER ASSIGN expression SEMICOLON .)
+    TYPE_INT        reduce using rule 11 (command -> IDENTIFIER ASSIGN expression SEMICOLON .)
+    TYPE_SHORT      reduce using rule 11 (command -> IDENTIFIER ASSIGN expression SEMICOLON .)
+    TYPE_LONG       reduce using rule 11 (command -> IDENTIFIER ASSIGN expression SEMICOLON .)
+    TYPE_FLOAT      reduce using rule 11 (command -> IDENTIFIER ASSIGN expression SEMICOLON .)
+    TYPE_DOUBLE     reduce using rule 11 (command -> IDENTIFIER ASSIGN expression SEMICOLON .)
+    TYPE_VOID       reduce using rule 11 (command -> IDENTIFIER ASSIGN expression SEMICOLON .)
+    NUMBER          reduce using rule 11 (command -> IDENTIFIER ASSIGN expression SEMICOLON .)
+    BINARY_NUMBER   reduce using rule 11 (command -> IDENTIFIER ASSIGN expression SEMICOLON .)
+    HEXADECIMAL_NUMBER reduce using rule 11 (command -> IDENTIFIER ASSIGN expression SEMICOLON .)
+    OCTAL_NUMBER    reduce using rule 11 (command -> IDENTIFIER ASSIGN expression SEMICOLON .)
+    RBRACE          reduce using rule 11 (command -> IDENTIFIER ASSIGN expression SEMICOLON .)
+
+
+state 87
+
+    (27) multiple_bracket_signature -> LBRACKET RBRACKET . multiple_bracket_with_bounds
+    (29) multiple_bracket_with_bounds -> . bracket_with_bounds multiple_bracket_with_bounds
+    (30) multiple_bracket_with_bounds -> . bracket_with_bounds
+    (31) bracket_with_bounds -> . LBRACKET number_id RBRACKET
+
+    LBRACKET        shift and go to state 92
+
+    multiple_bracket_with_bounds   shift and go to state 94
+    bracket_with_bounds            shift and go to state 79
+
+state 88
+
+    (31) bracket_with_bounds -> LBRACKET number_id . RBRACKET
+
+    RBRACKET        shift and go to state 95
+
+
+state 89
+
+    (32) number_id -> IDENTIFIER .
+
+    RBRACKET        reduce using rule 32 (number_id -> IDENTIFIER .)
+
+
+state 90
+
+    (33) number_id -> integer_number .
+
+    RBRACKET        reduce using rule 33 (number_id -> integer_number .)
+
+
+state 91
+
+    (29) multiple_bracket_with_bounds -> bracket_with_bounds multiple_bracket_with_bounds .
+
+    COMMA           reduce using rule 29 (multiple_bracket_with_bounds -> bracket_with_bounds multiple_bracket_with_bounds .)
+    RPAREN          reduce using rule 29 (multiple_bracket_with_bounds -> bracket_with_bounds multiple_bracket_with_bounds .)
+
+
+state 92
+
+    (31) bracket_with_bounds -> LBRACKET . number_id RBRACKET
+    (32) number_id -> . IDENTIFIER
+    (33) number_id -> . integer_number
+    (50) integer_number -> . NUMBER
+    (51) integer_number -> . BINARY_NUMBER
+    (52) integer_number -> . HEXADECIMAL_NUMBER
+    (53) integer_number -> . OCTAL_NUMBER
+
+    IDENTIFIER      shift and go to state 89
+    NUMBER          shift and go to state 43
+    BINARY_NUMBER   shift and go to state 44
+    HEXADECIMAL_NUMBER shift and go to state 45
+    OCTAL_NUMBER    shift and go to state 46
+
+    number_id                      shift and go to state 88
+    integer_number                 shift and go to state 90
+
+state 93
+
+    (19) signature_param_list -> signature_param COMMA signature_param .
+
+    RPAREN          reduce using rule 19 (signature_param_list -> signature_param COMMA signature_param .)
+
+
+state 94
+
+    (27) multiple_bracket_signature -> LBRACKET RBRACKET multiple_bracket_with_bounds .
+
+    COMMA           reduce using rule 27 (multiple_bracket_signature -> LBRACKET RBRACKET multiple_bracket_with_bounds .)
+    RPAREN          reduce using rule 27 (multiple_bracket_signature -> LBRACKET RBRACKET multiple_bracket_with_bounds .)
+
+
+state 95
+
+    (31) bracket_with_bounds -> LBRACKET number_id RBRACKET .
+
+    LBRACKET        reduce using rule 31 (bracket_with_bounds -> LBRACKET number_id RBRACKET .)
+    COMMA           reduce using rule 31 (bracket_with_bounds -> LBRACKET number_id RBRACKET .)
+    RPAREN          reduce using rule 31 (bracket_with_bounds -> LBRACKET number_id RBRACKET .)
 

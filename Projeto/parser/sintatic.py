@@ -4,211 +4,115 @@ import ply.yacc
 
 def p_program(p):
     """
-        program : function_declaration program
+        program : function_signature SEMICOLON program
+                | variable_declaration SEMICOLON program
                 | function program
                 |
     """
 
 
-def p_function_declaration(p):
-    """
-        function_declaration : signature SEMICOLON
-    """
-
-
 def p_command_block(p):
     """
-        command_block : LBRACE commands RBRACE
-                        | LBRACE RBRACE
+        command_block : LBRACE RBRACE
+                      | LBRACE command_list RBRACE
     """
 
 
-def p_commands(p):
+def p_command_list(p):
     """
-        commands : command commands
-                | command
+        command_list : command command_list
+                    | command
     """
 
 
 def p_command(p):
     """
-        command : data_type IDENTIFIER SEMICOLON
-                | while_loop
-                | assign SEMICOLON
-                | define_and_assign SEMICOLON
+        command : variable_declaration SEMICOLON
+                | variable_declaration ASSIGN expression SEMICOLON
+                | IDENTIFIER ASSIGN expression SEMICOLON
                 | expression SEMICOLON
-                | command_block
                 | SEMICOLON
-                | array_definition SEMICOLON
-    """
-
-
-def p_while_signature(p):
-    """
-        while_signature : KEYWORD_WHILE LPAREN expression RPAREN
-    """
-
-
-def p_while_loop(p):
-    """
-        while_loop : while_signature command_block
-                    | while_signature command
-    """
-
-
-def p_assign(p):
-    """
-        assign : IDENTIFIER ASSIGN expression
-    """
-
-
-def p_define_and_assign(p):
-    """
-        define_and_assign : type assign
-                         | pointer assign
-    """
-
-
-def p_assign(p):
-    """
-        assign : IDENTIFIER ASSIGN expression
-    """
-
-
-def p_define_and_assign(p):
-    """
-        define_and_assign : type assign
-                         | pointer assign
-    """
-
-
-def p_expression2(p):
-    """
-        expression2 : LOGICAL_AND expression
-                    | LOGICAL_OR expression
-                    | PLUS expression
-                    | MINUS expression
-                    | TIMES expression
-                    | DIVIDE expression
-                    | MODULUS expression
-                    | EQUALS_THEN expression
-                    | NOT_EQUALS expression
-                    | GREATER_THEN expression
-                    | LESS_THEN expression
-                    | LESS_EQUALS expression
-                    | GREATER_EQUALS expression
-                    | LPAREN expression RPAREN
-                    | expression
-                    | IDENTIFIER
-                    | number
-                    | STRING
-                    | CHARACTER
-                    | assign
-                    | define_and_assign
-
-
-    """
-
-
-def p_expression(p):
-    """
-        expression : expression expression2
-                    | NOT expression
-                    | expression2
-    """
-
-
-def p_number(p):
-    """
-        number : NUMBER
-                | FLOAT_NUMBER
-                | BINARY_NUMBER
-                | HEXADECIMAL_NUMBER
-                | OCTAL_NUMBER
     """
 
 
 def p_function(p):
     """
-        function : signature command_block
+        function : function_signature command_block
     """
 
 
-def p_signature(p):
+def p_funcion_signature(p):
     """
-        signature : type IDENTIFIER function_parameters
-                  | pointer IDENTIFIER function_parameters
-    """
-
-
-def p_function_parameters(p):
-    """
-        function_parameters : LPAREN parameters_list RPAREN
-                            | LPAREN RPAREN
+        function_signature : type IDENTIFIER LPAREN signature_param_list RPAREN
+                            | pointer IDENTIFIER LPAREN signature_param_list RPAREN
+                            | type IDENTIFIER LPAREN RPAREN
+                            | pointer IDENTIFIER LPAREN RPAREN
     """
 
 
-def p_parameters_list(p):
+def p_signature_param_list(p):
     """
-            parameters_list : data_definition COMMA parameters_list
-            | data_definition
-            | array_definition COMMA parameters_list
-            | array_definition
-            | array_declaration COMMA parameters_list
-            | array_declaration
+        signature_param_list : signature_param COMMA signature_param
+                             | signature_param
     """
 
 
-def p_array_declaration(p):
+def p_signature_param(p):
     """
-        array_declaration : data_definition IDENTIFIER LBRACKET RBRACKET
-    """
-
-
-def p_array_definition(p):
-    """
-        array_definition : data_definition IDENTIFIER multiple_bracket_array
-    """
-
-
-def p_sized_bracket_array(p):
-    """
-        sized_bracket_array : LBRACKET IDENTIFIER RBRACKET
-                            | LBRACKET NUMBER RBRACKET
+        signature_param : type
+                        | pointer
+                        | type multiple_bracket_signature
+                        | pointer multiple_bracket_signature
+                        | variable_declaration
+                        | variable_declaration multiple_bracket_signature
     """
 
 
-def p_multiple_bracket_array(p):
+def p_multiple_bracket_signature(p):
     """
-        multiple_bracket_array :  sized_bracket_array multiple_bracket_array
-                                | sized_bracket_array
+        multiple_bracket_signature : LBRACKET RBRACKET multiple_bracket_with_bounds
+                                    | multiple_bracket_with_bounds
+
     """
 
 
-# Types
-def p_data_type(p):
+def p_multiple_bracket_with_bounds(p):
     """
-        data_type : type
-        | pointer
+        multiple_bracket_with_bounds : bracket_with_bounds multiple_bracket_with_bounds
+                                     | bracket_with_bounds
+    """
+
+
+def p_bracket_with_bounds(p):
+    """
+        bracket_with_bounds : LBRACKET number_id RBRACKET
+    """
+
+
+def p_number_id(p):
+    """
+        number_id : IDENTIFIER
+                  | integer_number
+    """
+
+
+def p_variable_declaration(p):
+    """
+        variable_declaration : type IDENTIFIER
+                             | pointer IDENTIFIER
+    """
+
+
+def p_pointer(p):
+    """
+        pointer : type multiple_times
     """
 
 
 def p_type(p):
     """
-        type : primitive_types
-             | user_types
-    """
-
-
-def p_primitive_types(p):
-    """
-        primitive_types : TYPE_CHAR
-            |  TYPE_DOUBLE
-            |  TYPE_FLOAT
-            |  TYPE_INT
-            |  TYPE_LONG
-            |  TYPE_SHORT
-            |  TYPE_VOID
+        type : user_types
+            | primitive_types
     """
 
 
@@ -219,21 +123,67 @@ def p_user_types(p):
     """
 
 
-def p_pointer(p):
+def p_primitive_types(p):
     """
-        pointer : type TIMES multiple_pointer
-                | type TIMES
-    """
-
-
-def p_multiple_pointer(p):
-    """
-        multiple_pointer : TIMES multiple_pointer
-                         | TIMES
+        primitive_types : TYPE_CHAR
+                        | TYPE_INT
+                        | TYPE_SHORT
+                        | TYPE_LONG
+                        | TYPE_FLOAT
+                        | TYPE_DOUBLE
+                        | TYPE_VOID
     """
 
 
-# Fim dos tipos
+def p_multiple_times(p):
+    """
+        multiple_times : TIMES multiple_times
+                        | TIMES
+    """
+
+
+def p_integer_number(p):
+    """
+        integer_number : NUMBER
+                       | BINARY_NUMBER
+                       | HEXADECIMAL_NUMBER
+                       | OCTAL_NUMBER
+    """
+
+
+def p_expression(p):
+    """
+        expression : and_assign_bitwise_operator
+    """
+
+
+def p_and_assign_bitwise_operator(p):
+    """
+        and_assign_bitwise_operator : xor_assign_bitwise_operator BITWISE_AND_ASSIGN and_assign_bitwise_operator
+                                    | xor_assign_bitwise_operator
+    """
+
+
+def p_xor_assign_bitwise_operator(p):
+    """
+        xor_assign_bitwise_operator : or_assign_bitwise_operator BITWISE_XOR_ASSIGN xor_assign_bitwise_operator
+                                    | or_assign_bitwise_operator
+    """
+
+
+def p_or_assign_bitwise_operator(p):
+    """
+        or_assign_bitwise_operator : or_assign_bitwise_operator BITWISE_OR_ASSIGN left_shift_bitwise_assign
+                                    | left_shift_bitwise_assign
+    """
+
+
+def p_left_shift_bitwise_assign(p):
+    """
+        left_shift_bitwise_assign : IDENTIFIER
+                                  | integer_number
+    """
+
 
 def p_error(p):
     if p:
@@ -245,39 +195,15 @@ def p_error(p):
 
 def main():
     l = lex.lex()
-    l.input("""
-        
-        void teste();
-    
-        int main(int argc, char * argv[]){
-            int a[1];
-            {
-                char *** a = "Da quele jeito";
-            }
-            
-            while(int a = 0)
-                while(a > 10){
-                    while(a < 90){
-                        float PI = 10;
-                    }
-                }
-            
-            struct Person p; 
-            Person p;
-            void * a;
-            void * b;
-        }
-        
-        int fatorial(int a){
-            int result = 1;
-            int i = 1;
-            while(i <= a){
-                result = result * i;
-            }
-            
-        }
-    """)
-    parser = ply.yacc.yacc(debug=True)
+
+    input = ""
+    with open("parser\\parser_test.c", "r") as file:
+        for line in file:
+            if not line.startswith('#'):
+                input += line
+
+    l.input(input)
+    parser = ply.yacc.yacc()
     result = parser.parse()
 
 
