@@ -32,6 +32,13 @@ def p_program_assign(p):
     """
 
 
+def p_program_array(p):
+    """
+        program : array_declaration SEMICOLON
+                | array_declaration_with_values SEMICOLON
+    """
+
+
 def p_command_block(p):
     """
         command_block : LBRACE RBRACE
@@ -109,6 +116,19 @@ def p_bracket_with_bounds(p):
     """
 
 
+def p_value_list(p):
+    """
+        value_list : LBRACE value_list_item RBRACE
+    """
+
+
+def p_value_list_item(p):
+    """
+        value_list_item : expression
+                        | expression value_list_item
+    """
+
+
 def p_number_id(p):
     """
         number_id : IDENTIFIER
@@ -116,10 +136,29 @@ def p_number_id(p):
     """
 
 
+def p_array_declaration(p):
+    """
+        array_declaration : variable_declaration multiple_bracket_with_bounds
+    """
+
+
+def p_array_declaration_with_values(p):
+    """
+        array_declaration_with_values : array_declaration ASSIGN value_list
+    """
+
+
 def p_variable_declaration(p):
     """
         variable_declaration : type IDENTIFIER
                              | pointer IDENTIFIER
+    """
+
+
+def p_declaration_list(p):
+    """
+        
+
     """
 
 
@@ -137,6 +176,20 @@ def p_type(p):
     """
 
 
+def p_struct_declaration(p):
+    """
+        struct_declaration : KEYWORD_STRUCT IDENTIFIER LBRACE RBRACE
+                            | KEYWORD_STRUCT IDENTIFIER LBRACE struct_member_list RBRACE
+    """
+
+
+def p_struct_member_list(p):
+    """
+        struct_member_list : variable_declaration SEMICOLON
+
+    """
+
+
 # Completar os modificadores de tipo ex: static int | unsingned long long int | short int
 def p_type_modifier(p):
     """
@@ -146,7 +199,7 @@ def p_type_modifier(p):
                         | KEYWORD_EXTERN
                         | KEYWORD_SIGNED
                         | KEYWORD_REGISTER
-                        | KEYWORD_AUTO
+
     """
 
 

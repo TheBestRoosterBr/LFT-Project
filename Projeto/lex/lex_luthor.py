@@ -41,62 +41,60 @@ bitwise_operators = [
 ]
 
 others = [
-  'IDENTIFIER',
-  'INCREMENT', 'DECREMENT', #++ --
-  'LPAREN', 'RPAREN', # ( )
-  'LBRACKET', 'RBRACKET', # [ ]
-  'LBRACE', 'RBRACE', # { }
-  'SEMICOLON', # ;
-  'COMMENT', 'MULTILINE_COMMENT', #//aa /*aaa*/
-  'STRING', 'CHARACTER', #"string", 'c'
-  'COMMA', 'DOT', #, .
-  'QUESTION_MARK', # ?
-  'COLON', #:
-  'ARROW', #->
-  'PRE_PROCESSOR',
+    'IDENTIFIER',
+    'INCREMENT', 'DECREMENT',  # ++ --
+    'LPAREN', 'RPAREN',  # ( )
+    'LBRACKET', 'RBRACKET',  # [ ]
+    'LBRACE', 'RBRACE',  # { }
+    'SEMICOLON',  # ;
+    'COMMENT', 'MULTILINE_COMMENT',  # //aa /*aaa*/
+    'STRING', 'CHARACTER',  # "string", 'c'
+    'COMMA', 'DOT',  # , .
+    'QUESTION_MARK',  # ?
+    'COLON',  #:
+    'ARROW',  # ->
+    'PRE_PROCESSOR',
 ]
 
 tokens = (keywords + data_types + numbers + assigns + math_operators + logical_operators + compare_operators +
           bitwise_operators + others)
 
-
 # Palavras-chave da linguagem
 reserved = {
-  'auto': 'KEYWORD_AUTO',
-  'break': 'KEYWORD_BREAK',
-  'case': 'KEYWORD_CASE',
-  'const': 'KEYWORD_CONST',
-  'continue': 'KEYWORD_CONTINUE',
-  'default': 'KEYWORD_DEFAULT',
-  'do': 'KEYWORD_DO',
-  'else': 'KEYWORD_ELSE',
-  'enum': 'KEYWORD_ENUM',
-  'extern': 'KEYWORD_EXTERN',
-  'for': 'KEYWORD_FOR',
-  'goto': 'KEYWORD_GOTO',
-  'if': 'KEYWORD_IF',
-  'register': 'KEYWORD_REGISTER',
-  'return': 'KEYWORD_RETURN',
-  'signed': 'KEYWORD_SIGNED',
-  'sizeof': 'KEYWORD_SIZEOF',
-  'static': 'KEYWORD_STATIC',
-  'struct': 'KEYWORD_STRUCT',
-  'switch': 'KEYWORD_SWITCH',
-  'typedef': 'KEYWORD_TYPEDEF',
-  'union': 'KEYWORD_UNION',
-  'unsigned': 'KEYWORD_UNSIGNED',
-  'volatile': 'KEYWORD_VOLATILE',
-  'while': 'KEYWORD_WHILE',
+    'break': 'KEYWORD_BREAK',
+    'case': 'KEYWORD_CASE',
+    'const': 'KEYWORD_CONST',
+    'continue': 'KEYWORD_CONTINUE',
+    'default': 'KEYWORD_DEFAULT',
+    'do': 'KEYWORD_DO',
+    'else': 'KEYWORD_ELSE',
+    'enum': 'KEYWORD_ENUM',
+    'extern': 'KEYWORD_EXTERN',
+    'for': 'KEYWORD_FOR',
+    'goto': 'KEYWORD_GOTO',
+    'if': 'KEYWORD_IF',
+    'register': 'KEYWORD_REGISTER',
+    'return': 'KEYWORD_RETURN',
+    'signed': 'KEYWORD_SIGNED',
+    'sizeof': 'KEYWORD_SIZEOF',
+    'static': 'KEYWORD_STATIC',
+    'struct': 'KEYWORD_STRUCT',
+    'switch': 'KEYWORD_SWITCH',
+    'typedef': 'KEYWORD_TYPEDEF',
+    'union': 'KEYWORD_UNION',
+    'unsigned': 'KEYWORD_UNSIGNED',
+    'volatile': 'KEYWORD_VOLATILE',
+    'while': 'KEYWORD_WHILE',
 
-  'char': 'TYPE_CHAR',
-  'double': 'TYPE_DOUBLE',
-  'float': 'TYPE_FLOAT',
-  'void': 'TYPE_VOID',
-  'int': 'TYPE_INT',
-  'long': 'TYPE_LONG',
-  'short': 'TYPE_SHOT',
+    'char': 'TYPE_CHAR',
+    'double': 'TYPE_DOUBLE',
+    'float': 'TYPE_FLOAT',
+    'void': 'TYPE_VOID',
+    'int': 'TYPE_INT',
+    'long': 'TYPE_LONG',
+    'short': 'TYPE_SHOT',
 }
-#Regras de comentários
+# Regras de comentários
 t_COMMENT = r'//.*\n'
 t_MULTILINE_COMMENT = r'/\*(.|\n)*?\*/'
 
@@ -107,10 +105,9 @@ t_QUESTION_MARK = r'\?'
 t_COMMA = r','
 t_ARROW = r'->'
 
-#Operadores Especiais
+# Operadores Especiais
 t_INCREMENT = r'\+\+'
 t_DECREMENT = r'--'
-
 
 t_ASSIGN = r'='
 t_PLUS_ASSIGN = r'\+='
@@ -124,18 +121,17 @@ t_BITWISE_AND_ASSIGN = r'&='
 t_BITWISE_OR_ASSIGN = r'\|='
 t_BITWISE_XOR_ASSIGN = r'\^='
 
-
-#Operadores aritméticos
-t_PLUS   = r'\+'
-t_MINUS  = r'-'
-t_TIMES  = r'\*'
+# Operadores aritméticos
+t_PLUS = r'\+'
+t_MINUS = r'-'
+t_TIMES = r'\*'
 t_DIVIDE = r'/'
 t_MODULUS = r'%'
 
-#Operadores de atribuição 'ASSIGN', 'PLUS_ASSIGN', 'MINUS_ASSIGN', 'TIMES_ASSIGN', 'DIVIDE_ASSIGN', 'MODULUS_ASSIGN',
+# Operadores de atribuição 'ASSIGN', 'PLUS_ASSIGN', 'MINUS_ASSIGN', 'TIMES_ASSIGN', 'DIVIDE_ASSIGN', 'MODULUS_ASSIGN',
 # 'SHIFT_LEFT_ASSIGN', 'SHIFT_RIGHT_ASSIGN', 'BITWISE_AND_ASSIGN', 'BITWISE_OR_ASSIGN', 'BITWISE_XOR_ASSIGN',
 
-#Operadores de comparação
+# Operadores de comparação
 t_EQUALS_THEN = r'=='
 t_NOT_EQUALS = r'!='
 t_GREATER_THEN = r'>'
@@ -143,12 +139,12 @@ t_LESS_THEN = r'<'
 t_GREATER_EQUALS = '>='
 t_LESS_EQUALS = '<='
 
-#Operadores Lógicos
+# Operadores Lógicos
 t_LOGICAL_AND = r'&&'
 t_LOGICAL_OR = r'\|\|'
 t_NOT = '\!'
 
-#BITWISE 'BITWISE_AND', 'BITWISE_OR', 'BITWISE_XOR', 'BITWISE_COMPLEMENT', 'BITWISE_SHIFT_LEFT', 'BITWISE_SHIFT_RIGHT',
+# BITWISE 'BITWISE_AND', 'BITWISE_OR', 'BITWISE_XOR', 'BITWISE_COMPLEMENT', 'BITWISE_SHIFT_LEFT', 'BITWISE_SHIFT_RIGHT',
 t_BITWISE_AND = r'&'
 t_BITWISE_OR = r'\|'
 t_BITWISE_XOR = r'\^'
@@ -156,20 +152,20 @@ t_BITWISE_COMPLEMENT = r'~'
 t_BITWISE_SHIFT_LEFT = r'<<'
 t_BITWISE_SHIFT_RIGHT = r'>>'
 
-#Parentesis
+# Parentesis
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 
-#Colchetes
+# Colchetes
 t_LBRACKET = r'\['
 t_RBRACKET = r'\]'
 
-#Chaves
+# Chaves
 t_LBRACE = r'{'
 t_RBRACE = r'}'
 
 
-#Regras de Strings e Char
+# Regras de Strings e Char
 def t_STRING(t):
     r'"([^"\\]|\\.)*"'
     t.value = bytes(t.value, "utf-8").decode("unicode_escape")
@@ -188,10 +184,11 @@ t_OCTAL_NUMBER = r'0[Oo][0-7]+'
 t_NUMBER = r'[+-]?\d+'
 t_FLOAT_NUMBER = r'[+-]?(\d+\.\d+)'
 
+
 def t_IDENTIFIER(t):
-   r'[a-zA-Z_][a-zA-Z_0-9]*'
-   t.type = reserved.get(t.value, 'IDENTIFIER') # Verifica palavras reservadas
-   return t
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    t.type = reserved.get(t.value, 'IDENTIFIER')  # Verifica palavras reservadas
+    return t
 
 
 def t_PREPROCESSOR(t):
@@ -199,18 +196,23 @@ def t_PREPROCESSOR(t):
     t.type = 'PRE_PROCESSOR'
     return t
 
+
 # Ignorar espaços e tabs
 t_ignore = ' \t'
 
+
 # Regra para contar números de linha
 def t_newline(t):
-   r'\n+'
-   t.lexer.lineno += len(t.value)
+    r'\n+'
+    t.lexer.lineno += len(t.value)
+
 
 # Regra para lidar com erros
 def t_error(t):
-   print("Caractere ilegal '%s'" % t.value[0])
-   t.lexer.skip(1)
+    print("Caractere ilegal '%s'" % t.value[0])
+    t.lexer.skip(1)
+
+
 lexer = lex.lex()
 
 code = '''
@@ -222,7 +224,6 @@ code = '''
     +90.90
     
 '''
-
 
 lexer.input(code)
 
