@@ -16,7 +16,7 @@ def p_program_function_signature(p):
 
 def p_program_variable_declaration(p):
     """
-        program : variable_declaration SEMICOLON program
+        program : variable_declaration_list SEMICOLON program
     """
 
 
@@ -32,10 +32,10 @@ def p_program_assign(p):
     """
 
 
-def p_program_array(p):
+def p_program_struct_or_union(p):
     """
-        program : array_declaration SEMICOLON
-                | array_declaration_with_values SEMICOLON
+        program : struct_declaration program
+                | union_declaration program
     """
 
 
@@ -49,16 +49,26 @@ def p_command_block(p):
 def p_command_list(p):
     """
         command_list : command command_list
-                    | command
+                     | command
     """
 
 
 def p_command(p):
     """
-        command : variable_declaration SEMICOLON
-                | variable_declaration ASSIGN expression SEMICOLON
-                | expression SEMICOLON
+        command : variable_declaration_list SEMICOLON
+                | expression_list SEMICOLON
+                | struct_declaration
+                | union_declaration
                 | SEMICOLON
+                | label
+                | KEYWORD_GOTO IDENTIFIER SEMICOLON
+                | return_stm SEMICOLON
+    """
+
+
+def p_label(p):
+    """
+        label : IDENTIFIER COLON
     """
 
 
@@ -70,10 +80,8 @@ def p_function(p):
 
 def p_funcion_signature(p):
     """
-        function_signature : type IDENTIFIER LPAREN signature_param_list RPAREN
-                            | pointer IDENTIFIER LPAREN signature_param_list RPAREN
-                            | type IDENTIFIER LPAREN RPAREN
-                            | pointer IDENTIFIER LPAREN RPAREN
+        function_signature : type_identifier LPAREN signature_param_list RPAREN
+                           | type_identifier LPAREN RPAREN
     """
 
 
@@ -90,29 +98,30 @@ def p_signature_param(p):
                         | pointer
                         | type multiple_bracket_signature
                         | pointer multiple_bracket_signature
-                        | variable_declaration
-                        | variable_declaration multiple_bracket_signature
+                        | type_identifier
+                        | type_identifier multiple_bracket_signature
     """
 
 
 def p_multiple_bracket_signature(p):
     """
-        multiple_bracket_signature : LBRACKET RBRACKET multiple_bracket_with_bounds
-                                    | multiple_bracket_with_bounds
-
-    """
-
-
-def p_multiple_bracket_with_bounds(p):
-    """
-        multiple_bracket_with_bounds : bracket_with_bounds multiple_bracket_with_bounds
-                                     | bracket_with_bounds
+        multiple_bracket_signature :  LBRACKET RBRACKET multiple_bracket_signature
+                                    | LBRACKET RBRACKET
+                                    | bracket_with_bounds multiple_bracket_signature
+                                    | bracket_with_bounds
     """
 
 
 def p_bracket_with_bounds(p):
     """
         bracket_with_bounds : LBRACKET number_id RBRACKET
+    """
+
+
+def p_number_id(p):
+    """
+        number_id : IDENTIFIER
+                  | integer_number
     """
 
 
@@ -125,40 +134,58 @@ def p_value_list(p):
 def p_value_list_item(p):
     """
         value_list_item : expression
-                        | expression value_list_item
+                        | expression COMMA value_list_item
+                        | value_list
+                        | value_list COMMA value_list_item
     """
 
 
-def p_number_id(p):
+def p_type_identifier(p):
     """
-        number_id : IDENTIFIER
-                  | integer_number
-    """
-
-
-def p_array_declaration(p):
-    """
-        array_declaration : variable_declaration multiple_bracket_with_bounds
+        type_identifier : type IDENTIFIER
+                        | pointer IDENTIFIER
     """
 
 
-def p_array_declaration_with_values(p):
+def p_variable_declaration_list(p):
     """
-        array_declaration_with_values : array_declaration ASSIGN value_list
-    """
-
-
-def p_variable_declaration(p):
-    """
-        variable_declaration : type IDENTIFIER
-                             | pointer IDENTIFIER
+        variable_declaration_list : type identifier_list
+                                  | pointer identifier_list
     """
 
 
-def p_declaration_list(p):
+def p_identifier_list(p):
     """
-        
+        identifier_list : IDENTIFIER
+                        | IDENTIFIER COMMA identifier_list
+    """
 
+
+def p_identifier_list_array(p):
+    """
+        identifier_list :  IDENTIFIER multiple_bracket_signature
+                         | IDENTIFIER multiple_bracket_signature COMMA identifier_list
+    """
+
+
+def p_assign_identifier_list(p):
+    """
+        identifier_list : IDENTIFIER ASSIGN expression
+                        | IDENTIFIER ASSIGN expression COMMA identifier_list
+    """
+
+
+def p_assign_identifier_list_array(p):
+    """
+        identifier_list : IDENTIFIER multiple_bracket_signature ASSIGN value_list
+                       | IDENTIFIER multiple_bracket_signature ASSIGN value_list COMMA identifier_list
+    """
+
+
+def p_assign_identifier_list_non_array(p):
+    """
+        identifier_list : IDENTIFIER ASSIGN value_list
+                        | IDENTIFIER ASSIGN value_list COMMA identifier_list
     """
 
 
@@ -178,14 +205,30 @@ def p_type(p):
 
 def p_struct_declaration(p):
     """
-        struct_declaration : KEYWORD_STRUCT IDENTIFIER LBRACE RBRACE
-                            | KEYWORD_STRUCT IDENTIFIER LBRACE struct_member_list RBRACE
+        struct_declaration :  KEYWORD_STRUCT IDENTIFIER LBRACE RBRACE SEMICOLON
+                            | KEYWORD_STRUCT IDENTIFIER LBRACE struct_or_union_member_list RBRACE SEMICOLON
+                            | KEYWORD_STRUCT LBRACE RBRACE SEMICOLON
+                            | KEYWORD_STRUCT LBRACE struct_or_union_member_list RBRACE SEMICOLON
     """
 
 
-def p_struct_member_list(p):
+def p_union_declaration(p):
     """
-        struct_member_list : variable_declaration SEMICOLON
+        union_declaration :   KEYWORD_UNION IDENTIFIER LBRACE RBRACE SEMICOLON
+                            | KEYWORD_UNION IDENTIFIER LBRACE struct_or_union_member_list RBRACE SEMICOLON
+                            | KEYWORD_UNION LBRACE RBRACE SEMICOLON
+                            | KEYWORD_UNION LBRACE struct_or_union_member_list RBRACE SEMICOLON
+    """
+
+
+def p_struct_or_union_member_list(p):
+    """
+        struct_or_union_member_list : variable_declaration_list SEMICOLON
+                                   | variable_declaration_list SEMICOLON struct_or_union_member_list
+                                   | struct_declaration
+                                   | struct_declaration SEMICOLON struct_or_union_member_list
+                                   | union_declaration
+                                   | union_declaration SEMICOLON struct_or_union_member_list
 
     """
 
@@ -199,7 +242,6 @@ def p_type_modifier(p):
                         | KEYWORD_EXTERN
                         | KEYWORD_SIGNED
                         | KEYWORD_REGISTER
-
     """
 
 
@@ -235,6 +277,13 @@ def p_integer_number(p):
                        | BINARY_NUMBER
                        | HEXADECIMAL_NUMBER
                        | OCTAL_NUMBER
+    """
+
+
+def p_expression_list(p):
+    """
+        expression_list : expression
+                        | expression expression_list
     """
 
 
@@ -492,6 +541,13 @@ def p_number_exp(p):
                     | FLOAT_NUMBER
                     | CHARACTER
                     | parentesis_exp
+    """
+
+
+def p_return_stm(p):
+    """
+        return_stm : KEYWORD_RETURN
+                    | KEYWORD_RETURN expression
     """
 
 

@@ -3,7 +3,7 @@ import ply.lex as lex
 # Lista de nomes de tokens. Isso é sempre necessário
 
 keywords = [
-    'KEYWORD_AUTO', 'KEYWORD_BREAK', 'KEYWORD_CASE', 'KEYWORD_CONST', 'KEYWORD_CONTINUE',
+    'KEYWORD_BREAK', 'KEYWORD_CASE', 'KEYWORD_CONST', 'KEYWORD_CONTINUE',
     'KEYWORD_DEFAULT', 'KEYWORD_DO', 'KEYWORD_ELSE', 'KEYWORD_ENUM', 'KEYWORD_EXTERN',
     'KEYWORD_FOR', 'KEYWORD_GOTO', 'KEYWORD_IF', 'KEYWORD_REGISTER',
     'KEYWORD_RETURN', 'KEYWORD_SIGNED', 'KEYWORD_SIZEOF', 'KEYWORD_STATIC', 'KEYWORD_STRUCT',
@@ -42,6 +42,7 @@ bitwise_operators = [
 
 others = [
     'IDENTIFIER',
+    'LABEL',
     'INCREMENT', 'DECREMENT',  # ++ --
     'LPAREN', 'RPAREN',  # ( )
     'LBRACKET', 'RBRACKET',  # [ ]
@@ -142,7 +143,7 @@ t_LESS_EQUALS = '<='
 # Operadores Lógicos
 t_LOGICAL_AND = r'&&'
 t_LOGICAL_OR = r'\|\|'
-t_NOT = '\!'
+t_NOT = r'\!'
 
 # BITWISE 'BITWISE_AND', 'BITWISE_OR', 'BITWISE_XOR', 'BITWISE_COMPLEMENT', 'BITWISE_SHIFT_LEFT', 'BITWISE_SHIFT_RIGHT',
 t_BITWISE_AND = r'&'
@@ -163,7 +164,6 @@ t_RBRACKET = r'\]'
 # Chaves
 t_LBRACE = r'{'
 t_RBRACE = r'}'
-
 
 # Regras de Strings e Char
 def t_STRING(t):

@@ -1,16 +1,37 @@
 #include <stdio.h>
 
 void funcao(int[][1]);
-void funcao2(void[][1]);
+void funcao2(int[][1]);
 int funcao3(int);
+
+int a[100];
+
+union a{
+    union b{
+
+    };
+};
+
+struct id{
+    int nossa;
+    struct a{
+        struct {
+            int a;
+        };
+    };
+};
 
 int main()
 {
-    int a[10] = {1, 3};
+    struct a b = {12, "Noosa"};
+    int a = {12, 21};
+    LABEL:
+
+    goto LABEL;
 }
 
 
-void funcao(int a[][1])
+int funcao(int a[][1])
 {
-
+    return a[1][0];
 }
