@@ -9,6 +9,13 @@ __pycache__/
 # C extensions
 *.so
 
+#Arquivos desnecessários
+Projeto/parser/parser.out
+Projeto/parser/parser_test.c
+Projeto/parser/parsetab.py
+Projeto/parser/a.out
+Projeto/parser/nossa
+
 # Distribution / packaging
 .Python
 env/
