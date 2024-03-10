@@ -140,7 +140,7 @@ def p_type(p):
 # Completar os modificadores de tipo ex: static int | unsingned long long int | short int
 def p_type_modifier(p):
     """
-        type_modifier : KEYWORD_STATIC
+        type_modifier :   KEYWORD_STATIC
                         | KEYWORD_UNSIGNED
                         | KEYWORD_VOLATILE
                         | KEYWORD_EXTERN
@@ -354,6 +354,34 @@ def p_modulus_exp(p):
     """
 
 
+#Shift reduce
+def p_unary_exp(p):
+    """
+        unary_exp : postfix_exp
+                  | INCREMENT unary_exp
+                  | DECREMENT unary_exp
+                  | unary_operator unary_exp
+                  | cast_exp unary_exp
+                  | sizeof_exp
+
+    """
+
+
+def p_sizeof_exp(p):
+    """
+        sizeof_exp :  KEYWORD_SIZEOF unary_exp
+                    | KEYWORD_SIZEOF type
+                    | KEYWORD_SIZEOF pointer
+    """
+
+
+def p_cast_exp(p):
+    """
+        cast_exp : LPAREN type RPAREN
+                 | LPAREN pointer RPAREN
+    """
+
+
 def p_unary_operator(p):
     """
         unary_operator : BITWISE_AND
@@ -362,40 +390,6 @@ def p_unary_operator(p):
                        | MINUS
                        | BITWISE_COMPLEMENT
                        | NOT
-    """
-
-
-# Shift reduce
-def p_unary_exp(p):
-    """
-        unary_exp : prefix_exp
-    """
-
-
-def p_prefix_exp(p):
-    """
-        prefix_exp : postfix_exp
-              | INCREMENT unary_exp
-              | DECREMENT unary_exp
-              | unary_operator unary_exp
-              | cast_exp unary_exp
-              | sizeof_exp
-    """
-
-
-def p_sizeof_exp(p):
-    # shift/reduce
-    """
-                sizeof_exp : KEYWORD_SIZEOF unary_exp
-                            | KEYWORD_SIZEOF type
-                            | KEYWORD_SIZEOF pointer
-            """
-
-
-def p_cast_exp(p):
-    """
-        cast_exp : LPAREN type RPAREN
-                 | LPAREN pointer RPAREN
     """
 
 
@@ -448,11 +442,12 @@ def p_number_exp(p):
     """
 
 
+#shift/reduce
 def p_parentesis_exp(p):
-    # shift reduce
     """
         parentesis_exp : LPAREN expression RPAREN
     """
+
 
 
 def p_error(p):
