@@ -32,10 +32,11 @@ def p_program_assign(p):
     """
 
 
-def p_program_struct_or_union(p):
+def p_program_struct_or_union_or_enum(p):
     """
         program : struct_declaration program
                 | union_declaration program
+                | enum_declaration program
     """
 
 
@@ -69,6 +70,11 @@ def p_command(p):
                 | do_while_stm
                 | if_stm
                 | if_else_stm
+                | KEYWORD_BREAK SEMICOLON
+                | KEYWORD_CONTINUE SEMICOLON
+                | switch_stm
+                | enum_declaration
+
     """
 
 
@@ -239,6 +245,20 @@ def p_struct_or_union_member_list(p):
     """
 
 
+def p_enum_declaration(p):
+    """
+        enum_declaration : KEYWORD_ENUM LBRACE enum_item_list RBRACE SEMICOLON
+                        |   KEYWORD_ENUM IDENTIFIER LBRACE enum_item_list RBRACE SEMICOLON
+    """
+
+
+def p_enum_item_list(p):
+    """
+        enum_item_list : IDENTIFIER
+                        | IDENTIFIER COMMA enum_item_list
+    """
+
+
 # Completar os modificadores de tipo ex: static int | unsingned long long int | short int
 def p_type_modifier(p):
     """
@@ -248,6 +268,7 @@ def p_type_modifier(p):
                         | KEYWORD_EXTERN
                         | KEYWORD_SIGNED
                         | KEYWORD_REGISTER
+                        | KEYWORD_CONST
     """
 
 
@@ -592,6 +613,21 @@ def p_if_stm(p):
 def p_if_else_stm(p):
     """
         if_else_stm : KEYWORD_IF LPAREN expression RPAREN command KEYWORD_ELSE command
+    """
+
+
+def p_switch_stm(p):
+    """
+        switch_stm : KEYWORD_SWITCH LPAREN expression RPAREN LBRACE switch_itens RBRACE
+    """
+
+
+def p_switch_itens(p):
+    """
+        switch_itens : KEYWORD_CASE expression COLON command_list
+                    | KEYWORD_DEFAULT COLON command_list
+                    | KEYWORD_CASE expression COLON command_list switch_itens
+                    | KEYWORD_DEFAULT COLON command_list switch_itens
     """
 
 

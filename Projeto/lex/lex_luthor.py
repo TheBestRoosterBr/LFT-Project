@@ -42,13 +42,11 @@ bitwise_operators = [
 
 others = [
     'IDENTIFIER',
-    'LABEL',
     'INCREMENT', 'DECREMENT',  # ++ --
     'LPAREN', 'RPAREN',  # ( )
     'LBRACKET', 'RBRACKET',  # [ ]
     'LBRACE', 'RBRACE',  # { }
     'SEMICOLON',  # ;
-    'COMMENT', 'MULTILINE_COMMENT',  # //aa /*aaa*/
     'STRING', 'CHARACTER',  # "string", 'c'
     'COMMA', 'DOT',  # , .
     'QUESTION_MARK',  # ?
@@ -56,6 +54,9 @@ others = [
     'ARROW',  # ->
     'PRE_PROCESSOR',
 ]
+
+# Desnecessário 'COMMENT', 'MULTILINE_COMMENT',  # //aa /*aaa*/
+
 
 tokens = (keywords + data_types + numbers + assigns + math_operators + logical_operators + compare_operators +
           bitwise_operators + others)
@@ -95,9 +96,16 @@ reserved = {
     'long': 'TYPE_LONG',
     'short': 'TYPE_SHOT',
 }
-# Regras de comentários
-t_COMMENT = r'//.*\n'
-t_MULTILINE_COMMENT = r'/\*(.|\n)*?\*/'
+
+
+def t_COMMENT(t):
+    r'//.*'
+    pass
+
+def t_MULTILINE_COMMENT(t):
+    r'/\*(.|\n)*?\*/'
+    pass
+
 
 t_SEMICOLON = r';'
 t_COLON = r':'
