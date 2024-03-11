@@ -63,6 +63,12 @@ def p_command(p):
                 | label
                 | KEYWORD_GOTO IDENTIFIER SEMICOLON
                 | return_stm SEMICOLON
+                | command_block
+                | for_stm
+                | while_stm
+                | do_while_stm
+                | if_stm
+                | if_else_stm
     """
 
 
@@ -283,7 +289,7 @@ def p_integer_number(p):
 def p_expression_list(p):
     """
         expression_list : expression
-                        | expression expression_list
+                        | expression COMMA expression_list
     """
 
 
@@ -551,12 +557,49 @@ def p_return_stm(p):
     """
 
 
-#shift/reduce
+def p_while(p):
+    """
+        while_stm : KEYWORD_WHILE LPAREN expression RPAREN command
+    """
+
+
+def p_do_while(p):
+    """
+        do_while_stm : KEYWORD_DO command KEYWORD_WHILE LPAREN expression RPAREN SEMICOLON
+    """
+
+
+def p_for_param(p):
+    """
+        for_param : expression_list SEMICOLON
+                  | SEMICOLON
+    """
+
+
+def p_for_stm(p):
+    """
+        for_stm : KEYWORD_FOR LPAREN for_param for_param RPAREN command
+                | KEYWORD_FOR LPAREN for_param for_param expression_list RPAREN command
+    """
+
+
+def p_if_stm(p):
+    """
+        if_stm : KEYWORD_IF LPAREN expression RPAREN command
+    """
+
+
+def p_if_else_stm(p):
+    """
+        if_else_stm : KEYWORD_IF LPAREN expression RPAREN command KEYWORD_ELSE command
+    """
+
+
+# shift/reduce
 def p_parentesis_exp(p):
     """
         parentesis_exp : LPAREN expression RPAREN
     """
-
 
 
 def p_error(p):
