@@ -54,9 +54,31 @@ def p_command_list(p):
     """
 
 
+# S -> S' | S''
 def p_command(p):
     """
-        command : variable_declaration_list SEMICOLON
+        command : if_else
+                | if
+    """
+
+
+def p_if_else(p):
+    """
+        if_else : KEYWORD_IF LPAREN expression RPAREN if_else KEYWORD_ELSE if_else
+                 | others
+    """
+
+
+def p_if(p):
+    """
+        if : KEYWORD_IF LPAREN expression RPAREN command
+            | KEYWORD_IF LPAREN expression RPAREN if_else KEYWORD_ELSE if
+    """
+
+
+def p_others(p):
+    """
+        others : variable_declaration_list SEMICOLON
                 | expression_list SEMICOLON
                 | struct_declaration
                 | union_declaration
@@ -68,13 +90,10 @@ def p_command(p):
                 | for_stm
                 | while_stm
                 | do_while_stm
-                | if_stm
-                | if_else_stm
                 | KEYWORD_BREAK SEMICOLON
                 | KEYWORD_CONTINUE SEMICOLON
                 | switch_stm
                 | enum_declaration
-
     """
 
 
@@ -601,18 +620,6 @@ def p_for_stm(p):
     """
         for_stm : KEYWORD_FOR LPAREN for_param for_param RPAREN command
                 | KEYWORD_FOR LPAREN for_param for_param expression_list RPAREN command
-    """
-
-
-def p_if_stm(p):
-    """
-        if_stm : KEYWORD_IF LPAREN expression RPAREN command
-    """
-
-
-def p_if_else_stm(p):
-    """
-        if_else_stm : KEYWORD_IF LPAREN expression RPAREN command KEYWORD_ELSE command
     """
 
 
