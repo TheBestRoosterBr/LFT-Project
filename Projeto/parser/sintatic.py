@@ -40,72 +40,155 @@ def p_program_struct_or_union_or_enum(p):
     """
 
 
-def p_command_block(p):
+# Copiado do java
+def p_block(p):
     """
-        command_block : LBRACE RBRACE
-                      | LBRACE command_list RBRACE
-    """
-
-
-def p_command_list(p):
-    """
-        command_list : command command_list
-                     | command
+        block : LBRACE RBRACE
+              | LBRACE block_statements RBRACE
     """
 
 
-# S -> S' | S''
-def p_command(p):
+def p_block_statements(p):
     """
-        command : if_else
-                | if
-    """
-
-
-def p_if_else(p):
-    """
-        if_else : KEYWORD_IF LPAREN expression RPAREN if_else KEYWORD_ELSE if_else
-                 | others
+        block_statements : block_statement
+                        | block_statements block_statement
     """
 
 
-def p_if(p):
+def p_block_statement(p):
     """
-        if : KEYWORD_IF LPAREN expression RPAREN command
-            | KEYWORD_IF LPAREN expression RPAREN if_else KEYWORD_ELSE if
-    """
-
-
-def p_others(p):
-    """
-        others : variable_declaration_list SEMICOLON
-                | expression_list SEMICOLON
-                | struct_declaration
-                | union_declaration
-                | SEMICOLON
-                | label
-                | KEYWORD_GOTO IDENTIFIER SEMICOLON
-                | return_stm SEMICOLON
-                | command_block
-                | for_stm
-                | while_stm
-                | do_while_stm
-                | KEYWORD_BREAK SEMICOLON
-                | KEYWORD_CONTINUE SEMICOLON
-                | switch_stm
-                | enum_declaration
+        block_statement : variable_declaration_list SEMICOLON
+                        | statement
+                        | struct_declaration
+                        | enum_declaration
+                        | union_declaration
     """
 
 
-def p_label(p):
+def p_statement(p):
     """
-        label : IDENTIFIER COLON
+        statement :   statement_without_trailing_substatement
+                   |  if_then_statement
+                   |  if_then_else_statement
+                   |  while_statement
+                   |  for_statement
+
+    """
+
+
+def p_statement_without_trailing_substatement(p):
+    """
+        statement_without_trailing_substatement : block
+                                                | SEMICOLON
+                                                | expression_list
+                                                | switch_stm
+                                                | do_statement
+                                                | KEYWORD_BREAK SEMICOLON
+                                                | KEYWORD_CONTINUE SEMICOLON
+                                                | return_stm SEMICOLON
+                                                | IDENTIFIER COLON
+                                                | KEYWORD_GOTO IDENTIFIER SEMICOLON
+    """
+
+
+def p_statement_no_short_if(p):
+    """
+        statement_no_short_if : statement_without_trailing_substatement
+                              | if_then_else_statement_no_short_if
+                              | while_statement_no_short_if
+                              | for_statement_no_short_if
+    """
+
+
+def p_if_then_statement(p):
+    """
+        if_then_statement : KEYWORD_IF LPAREN expression RPAREN statement
+    """
+
+
+def p_if_then_else_statement(p):
+    """
+        if_then_else_statement : KEYWORD_IF LPAREN expression RPAREN statement_no_short_if KEYWORD_ELSE statement
+    """
+
+
+def p_if_then_else_statement_no_short_if(p):
+    """
+        if_then_else_statement_no_short_if : KEYWORD_IF LPAREN expression RPAREN statement_no_short_if KEYWORD_ELSE statement_no_short_if
+    """
+
+
+def p_while_statement(p):
+    """
+        while_statement : KEYWORD_WHILE LPAREN expression RPAREN statement
+    """
+
+
+def p_while_statement_no_short_if(p):
+    """
+        while_statement_no_short_if : KEYWORD_WHILE LPAREN expression RPAREN statement_no_short_if
+    """
+
+
+def p_do_statement(p):
+    """
+        do_statement : KEYWORD_DO statement KEYWORD_WHILE LPAREN expression RPAREN SEMICOLON
+    """
+
+
+def p_for_params(p):
+    """
+        for_params : variable_declaration_list SEMICOLON for_param SEMICOLON
+                    | variable_declaration_list SEMICOLON for_param expression_list
+                    | for_param for_param expression_list
+                    | for_param for_param
+    """
+
+
+def p_for_param(p):
+    """
+        for_param : SEMICOLON
+                  | expression_list SEMICOLON
+    """
+
+
+def p_for_statement(p):
+    """
+        for_statement : KEYWORD_FOR LPAREN for_params RPAREN statement
+    """
+
+
+def p_for_statement_no_short_if(p):
+    """
+        for_statement_no_short_if : KEYWORD_FOR LPAREN for_params RPAREN statement_no_short_if
+    """
+
+
+def p_switch_stm(p):
+    """
+        switch_stm : KEYWORD_SWITCH LPAREN expression RPAREN LBRACE switch_itens RBRACE
+    """
+
+
+def p_switch_itens(p):
+    """
+        switch_itens : KEYWORD_CASE expression COLON block_statements
+                    | KEYWORD_DEFAULT COLON block_statements
+                    | KEYWORD_CASE expression COLON block_statements switch_itens
+                    | KEYWORD_DEFAULT COLON block_statements switch_itens
+    """
+
+
+def p_return_stm(p):
+    """
+        return_stm : KEYWORD_RETURN
+                    | KEYWORD_RETURN expression
     """
 
 
 def p_function(p):
     """
-        function : function_signature command_block
+        function : function_signature block
     """
 
 
@@ -116,10 +199,17 @@ def p_funcion_signature(p):
     """
 
 
+def p_triple_dot(p):
+    """
+        triple_dot : DOT DOT DOT
+    """
+
+
 def p_signature_param_list(p):
     """
         signature_param_list : signature_param COMMA signature_param
                              | signature_param
+
     """
 
 
@@ -131,6 +221,7 @@ def p_signature_param(p):
                         | pointer multiple_bracket_signature
                         | type_identifier
                         | type_identifier multiple_bracket_signature
+                        | triple_dot
     """
 
 
@@ -502,16 +593,16 @@ def p_modulus_exp(p):
     """
 
 
-#Shift reduce
+# Shift reduce
 def p_unary_exp(p):
     """
         unary_exp : postfix_exp
                   | INCREMENT unary_exp
                   | DECREMENT unary_exp
+
                   | unary_operator unary_exp
                   | cast_exp unary_exp
                   | sizeof_exp
-
     """
 
 
@@ -590,54 +681,6 @@ def p_number_exp(p):
     """
 
 
-def p_return_stm(p):
-    """
-        return_stm : KEYWORD_RETURN
-                    | KEYWORD_RETURN expression
-    """
-
-
-def p_while(p):
-    """
-        while_stm : KEYWORD_WHILE LPAREN expression RPAREN command
-    """
-
-
-def p_do_while(p):
-    """
-        do_while_stm : KEYWORD_DO command KEYWORD_WHILE LPAREN expression RPAREN SEMICOLON
-    """
-
-
-def p_for_param(p):
-    """
-        for_param : expression_list SEMICOLON
-                  | SEMICOLON
-    """
-
-
-def p_for_stm(p):
-    """
-        for_stm : KEYWORD_FOR LPAREN for_param for_param RPAREN command
-                | KEYWORD_FOR LPAREN for_param for_param expression_list RPAREN command
-    """
-
-
-def p_switch_stm(p):
-    """
-        switch_stm : KEYWORD_SWITCH LPAREN expression RPAREN LBRACE switch_itens RBRACE
-    """
-
-
-def p_switch_itens(p):
-    """
-        switch_itens : KEYWORD_CASE expression COLON command_list
-                    | KEYWORD_DEFAULT COLON command_list
-                    | KEYWORD_CASE expression COLON command_list switch_itens
-                    | KEYWORD_DEFAULT COLON command_list switch_itens
-    """
-
-
 # shift/reduce
 def p_parentesis_exp(p):
     """
@@ -657,7 +700,7 @@ def main():
     l = lex.lex()
 
     input = ""
-    with open("parser\\parser_test.c", "r") as file:
+    with open("parser_test.c", "r") as file:
         for line in file:
             if not line.startswith('#'):
                 input += line
