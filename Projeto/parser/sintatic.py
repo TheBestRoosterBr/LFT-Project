@@ -8,12 +8,6 @@ def p_program(p):
     """
 
 
-def p_program_function_signature(p):
-    """
-        program : function_signature SEMICOLON program
-    """
-
-
 def p_program_variable_declaration(p):
     """
         program : variable_declaration_list SEMICOLON program
@@ -34,9 +28,9 @@ def p_program_assign(p):
 
 def p_program_struct_or_union_or_enum(p):
     """
-        program : struct_declaration program
-                | union_declaration program
-                | enum_declaration program
+        program : struct_declaration SEMICOLON program
+                | union_declaration SEMICOLON program
+                | enum_declaration SEMICOLON program
     """
 
 
@@ -76,7 +70,7 @@ def p_statement_without_trailing_substatement(p):
     """
         statement_without_trailing_substatement : block
                                                 | SEMICOLON
-                                                | expression_list
+                                                | expression_list SEMICOLON
                                                 | switch_stm
                                                 | do_statement
                                                 | KEYWORD_BREAK SEMICOLON
@@ -85,9 +79,9 @@ def p_statement_without_trailing_substatement(p):
                                                 | IDENTIFIER COLON
                                                 | KEYWORD_GOTO IDENTIFIER SEMICOLON
                                                 | variable_declaration_list SEMICOLON
-                                                | struct_declaration
-                                                | enum_declaration
-                                                | union_declaration
+                                                | struct_declaration SEMICOLON
+                                                | enum_declaration SEMICOLON
+                                                | union_declaration SEMICOLON
     """
 
 
@@ -194,8 +188,8 @@ def p_function(p):
 
 def p_funcion_signature(p):
     """
-        function_signature : type_identifier LPAREN signature_param_list RPAREN
-                           | type_identifier LPAREN RPAREN
+        function_signature : type identifier LPAREN signature_param_list RPAREN
+                           | type identifier LPAREN RPAREN
     """
 
 
@@ -207,7 +201,7 @@ def p_triple_dot(p):
 
 def p_signature_param_list(p):
     """
-        signature_param_list : signature_param COMMA signature_param
+        signature_param_list : signature_param COMMA signature_param_list
                              | signature_param
 
     """
@@ -216,11 +210,10 @@ def p_signature_param_list(p):
 def p_signature_param(p):
     """
         signature_param : type
-                        | pointer
+                        | type multiple_times
                         | type multiple_bracket_signature
-                        | pointer multiple_bracket_signature
-                        | type_identifier
-                        | type_identifier multiple_bracket_signature
+                        | type identifier
+                        | type identifier multiple_bracket_signature
                         | triple_dot
     """
 
@@ -262,58 +255,94 @@ def p_value_list_item(p):
     """
 
 
-def p_type_identifier(p):
-    """
-        type_identifier : type IDENTIFIER
-                        | pointer IDENTIFIER
-    """
-
-
 def p_variable_declaration_list(p):
     """
         variable_declaration_list : type identifier_list
-                                  | pointer identifier_list
     """
 
 
 def p_identifier_list(p):
     """
-        identifier_list : IDENTIFIER
-                        | IDENTIFIER COMMA identifier_list
+        identifier_list : identifier
+                        | identifier COMMA identifier_list
     """
 
 
 def p_identifier_list_array(p):
     """
-        identifier_list :  IDENTIFIER multiple_bracket_signature
-                         | IDENTIFIER multiple_bracket_signature COMMA identifier_list
+        identifier_list :  identifier multiple_bracket_signature
+                         | identifier multiple_bracket_signature COMMA identifier_list
     """
 
 
 def p_assign_identifier_list(p):
     """
-        identifier_list : IDENTIFIER ASSIGN expression
-                        | IDENTIFIER ASSIGN expression COMMA identifier_list
+        identifier_list : identifier ASSIGN expression
+                        | identifier ASSIGN expression COMMA identifier_list
     """
 
 
 def p_assign_identifier_list_array(p):
     """
-        identifier_list : IDENTIFIER multiple_bracket_signature ASSIGN value_list
-                       | IDENTIFIER multiple_bracket_signature ASSIGN value_list COMMA identifier_list
+        identifier_list : identifier multiple_bracket_signature ASSIGN value_list
+                       | identifier multiple_bracket_signature ASSIGN value_list COMMA identifier_list
     """
 
 
 def p_assign_identifier_list_non_array(p):
     """
-        identifier_list : IDENTIFIER ASSIGN value_list
-                        | IDENTIFIER ASSIGN value_list COMMA identifier_list
+        identifier_list : identifier ASSIGN value_list
+                        | identifier ASSIGN value_list COMMA identifier_list
     """
 
 
-def p_pointer(p):
+def p_function_pointer(p):
     """
-        pointer : type multiple_times
+        function_pointer : identifier LPAREN signature_param_list RPAREN
+                         | identifier LPAREN RPAREN
+    """
+
+
+def p_function_pointer_array(p):
+    """
+        function_pointer_array : LPAREN TIMES identifier multiple_bracket_signature RPAREN LPAREN signature_param_list RPAREN
+                               | LPAREN TIMES identifier multiple_bracket_signature RPAREN LPAREN RPAREN
+    """
+
+
+def p_identifier_list_function_pointer(p):
+    """
+        identifier_list : function_pointer
+                        | function_pointer COMMA identifier_list
+    """
+
+
+def p_identifier_list_function_pointer_assign(p):
+    """
+        identifier_list : function_pointer ASSIGN expression
+                        | function_pointer ASSIGN expression COMMA identifier_list
+    """
+
+
+def p_identifier_list_function_pointer_array(p):
+    """
+        identifier_list : function_pointer_array
+                        | function_pointer_array COMMA identifier_list
+    """
+
+
+def p_identifier_list_function_pointer_array_assing(p):
+    """
+        identifier_list : function_pointer_array ASSIGN value_list
+                        | function_pointer_array ASSIGN value_list COMMA identifier_list
+    """
+
+
+def p_identifier(p):
+    """
+        identifier :  IDENTIFIER
+                    | TIMES identifier
+                    | LPAREN identifier RPAREN
     """
 
 
@@ -327,31 +356,42 @@ def p_type(p):
 
 def p_struct_declaration(p):
     """
-        struct_declaration :  KEYWORD_STRUCT IDENTIFIER LBRACE RBRACE SEMICOLON
-                            | KEYWORD_STRUCT IDENTIFIER LBRACE struct_or_union_member_list RBRACE SEMICOLON
-                            | KEYWORD_STRUCT LBRACE RBRACE SEMICOLON
-                            | KEYWORD_STRUCT LBRACE struct_or_union_member_list RBRACE SEMICOLON
+        struct_declaration :  KEYWORD_STRUCT IDENTIFIER LBRACE RBRACE
+                            | KEYWORD_STRUCT IDENTIFIER LBRACE struct_or_union_member_list RBRACE
+                            | KEYWORD_STRUCT LBRACE RBRACE
+                            | KEYWORD_STRUCT LBRACE struct_or_union_member_list RBRACE
+                            | KEYWORD_STRUCT IDENTIFIER
     """
 
 
 def p_union_declaration(p):
     """
-        union_declaration :   KEYWORD_UNION IDENTIFIER LBRACE RBRACE SEMICOLON
-                            | KEYWORD_UNION IDENTIFIER LBRACE struct_or_union_member_list RBRACE SEMICOLON
-                            | KEYWORD_UNION LBRACE RBRACE SEMICOLON
-                            | KEYWORD_UNION LBRACE struct_or_union_member_list RBRACE SEMICOLON
+        union_declaration :   KEYWORD_UNION IDENTIFIER LBRACE RBRACE
+                            | KEYWORD_UNION IDENTIFIER LBRACE struct_or_union_member_list RBRACE
+                            | KEYWORD_UNION LBRACE RBRACE
+                            | KEYWORD_UNION LBRACE struct_or_union_member_list RBRACE
+                            | KEYWORD_UNION IDENTIFIER
     """
 
 
 def p_struct_or_union_member_list(p):
     """
-        struct_or_union_member_list : variable_declaration_list SEMICOLON
-                                   | variable_declaration_list SEMICOLON struct_or_union_member_list
-                                   | struct_declaration
-                                   | struct_declaration SEMICOLON struct_or_union_member_list
-                                   | union_declaration
-                                   | union_declaration SEMICOLON struct_or_union_member_list
+        struct_or_union_member_list : variable_declaration_list_no_assign SEMICOLON
+                                   | variable_declaration_list_no_assign SEMICOLON struct_or_union_member_list
 
+    """
+
+
+def p_variable_declaration_list_no_assign(p):
+    """
+        variable_declaration_list_no_assign : type variable_list_no_assign
+    """
+
+
+def p_variable_list_no_assign(p):
+    """
+        variable_list_no_assign : identifier
+                                | variable_list_no_assign COMMA identifier
     """
 
 
@@ -384,8 +424,8 @@ def p_type_modifier(p):
 
 def p_user_types(p):
     """
-        user_types : KEYWORD_STRUCT IDENTIFIER
-                   | KEYWORD_UNION IDENTIFIER
+        user_types : struct_declaration
+                   | union_declaration
     """
 
 
@@ -611,16 +651,16 @@ def p_sizeof_exp(p):
     """
         sizeof_exp :  KEYWORD_SIZEOF postfix_exp
                     | KEYWORD_SIZEOF type
-                    | KEYWORD_SIZEOF pointer
+                    | KEYWORD_SIZEOF type multiple_times
                     | KEYWORD_SIZEOF LPAREN type RPAREN
-                    | KEYWORD_SIZEOF LPAREN pointer RPAREN
+                    | KEYWORD_SIZEOF LPAREN type multiple_times RPAREN
     """
 
 
 def p_cast_exp(p):
     """
         cast_exp : LPAREN type RPAREN
-                 | LPAREN pointer RPAREN
+                 | LPAREN type multiple_times RPAREN
     """
 
 
