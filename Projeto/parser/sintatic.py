@@ -57,11 +57,7 @@ def p_block_statements(p):
 
 def p_block_statement(p):
     """
-        block_statement : variable_declaration_list SEMICOLON
-                        | statement
-                        | struct_declaration
-                        | enum_declaration
-                        | union_declaration
+        block_statement : statement
     """
 
 
@@ -88,6 +84,10 @@ def p_statement_without_trailing_substatement(p):
                                                 | return_stm SEMICOLON
                                                 | IDENTIFIER COLON
                                                 | KEYWORD_GOTO IDENTIFIER SEMICOLON
+                                                | variable_declaration_list SEMICOLON
+                                                | struct_declaration
+                                                | enum_declaration
+                                                | union_declaration
     """
 
 
@@ -138,7 +138,7 @@ def p_do_statement(p):
 
 def p_for_params(p):
     """
-        for_params : variable_declaration_list SEMICOLON for_param SEMICOLON
+        for_params : variable_declaration_list SEMICOLON for_param
                     | variable_declaration_list SEMICOLON for_param expression_list
                     | for_param for_param expression_list
                     | for_param for_param
@@ -597,20 +597,23 @@ def p_modulus_exp(p):
 def p_unary_exp(p):
     """
         unary_exp : postfix_exp
-                  | INCREMENT unary_exp
-                  | DECREMENT unary_exp
-
-                  | unary_operator unary_exp
-                  | cast_exp unary_exp
+                  | INCREMENT postfix_exp
+                  | DECREMENT postfix_exp
+                  | postfix_exp INCREMENT
+                  | postfix_exp DECREMENT
+                  | cast_exp postfix_exp
                   | sizeof_exp
+                  | unary_operator unary_exp
     """
 
 
 def p_sizeof_exp(p):
     """
-        sizeof_exp :  KEYWORD_SIZEOF unary_exp
+        sizeof_exp :  KEYWORD_SIZEOF postfix_exp
                     | KEYWORD_SIZEOF type
                     | KEYWORD_SIZEOF pointer
+                    | KEYWORD_SIZEOF LPAREN type RPAREN
+                    | KEYWORD_SIZEOF LPAREN pointer RPAREN
     """
 
 
@@ -639,8 +642,6 @@ def p_postfix_exp(p):
                     | postfix_exp LPAREN function_call_parameters RPAREN
                     | postfix_exp DOT IDENTIFIER
                     | postfix_exp ARROW IDENTIFIER
-                    | postfix_exp INCREMENT
-                    | postfix_exp DECREMENT
                     | primary_exp
     """
 
