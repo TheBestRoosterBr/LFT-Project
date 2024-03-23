@@ -4,33 +4,39 @@ import ply.yacc
 
 def p_program(p):
     """
-        program :
+        program : program_item
+                | program_item program
     """
 
 
 def p_program_variable_declaration(p):
     """
-        program : variable_declaration_list SEMICOLON program
+        program_item : variable_declaration_list SEMICOLON
     """
 
 
 def p_program_function(p):
     """
-        program : function program
+        program_item : function
     """
 
 
 def p_program_assign(p):
     """
-        program : expression program
+        program_item : global_assign_identifier_list
     """
 
 
-def p_program_struct_or_union_or_enum(p):
+def p_program_type(p):
     """
-        program : struct_declaration SEMICOLON program
-                | union_declaration SEMICOLON program
-                | enum_declaration SEMICOLON program
+        program_item : type SEMICOLON
+    """
+
+
+def p_global_assign_identifier_list(p):
+    """
+        global_assign_identifier_list : IDENTIFIER ASSIGN expression
+                                      | IDENTIFIER ASSIGN expression COMMA global_assign_identifier_list
     """
 
 
@@ -79,9 +85,7 @@ def p_statement_without_trailing_substatement(p):
                                                 | IDENTIFIER COLON
                                                 | KEYWORD_GOTO IDENTIFIER SEMICOLON
                                                 | variable_declaration_list SEMICOLON
-                                                | struct_declaration SEMICOLON
-                                                | enum_declaration SEMICOLON
-                                                | union_declaration SEMICOLON
+                                                | type SEMICOLON
     """
 
 
@@ -397,8 +401,9 @@ def p_variable_list_no_assign(p):
 
 def p_enum_declaration(p):
     """
-        enum_declaration : KEYWORD_ENUM LBRACE enum_item_list RBRACE SEMICOLON
-                        |   KEYWORD_ENUM IDENTIFIER LBRACE enum_item_list RBRACE SEMICOLON
+        enum_declaration : KEYWORD_ENUM LBRACE enum_item_list RBRACE
+                         | KEYWORD_ENUM IDENTIFIER LBRACE enum_item_list RBRACE
+                         | KEYWORD_ENUM IDENTIFIER
     """
 
 
@@ -406,6 +411,8 @@ def p_enum_item_list(p):
     """
         enum_item_list : IDENTIFIER
                         | IDENTIFIER COMMA enum_item_list
+                        | IDENTIFIER ASSIGN expression
+                        | IDENTIFIER ASSIGN expression COMMA enum_item_list
     """
 
 
@@ -426,6 +433,7 @@ def p_user_types(p):
     """
         user_types : struct_declaration
                    | union_declaration
+                   | enum_declaration
     """
 
 
@@ -650,8 +658,6 @@ def p_unary_exp(p):
 def p_sizeof_exp(p):
     """
         sizeof_exp :  KEYWORD_SIZEOF postfix_exp
-                    | KEYWORD_SIZEOF type
-                    | KEYWORD_SIZEOF type multiple_times
                     | KEYWORD_SIZEOF LPAREN type RPAREN
                     | KEYWORD_SIZEOF LPAREN type multiple_times RPAREN
     """
@@ -727,8 +733,7 @@ def p_parentesis_exp(p):
     """
         parentesis_exp : LPAREN expression RPAREN
     """
-
-
+    
 def p_error(p):
     if p:
         print("Erro de sintaxe na linha %d: %s" % (p.lineno, p.value))
