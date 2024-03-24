@@ -1,5 +1,6 @@
 from Projeto.lex.lex_luthor import *
 import ply.yacc
+import Projeto.abstractSintax.abstractSintax as AbsSintax
 
 
 def p_program(p):
@@ -8,29 +9,38 @@ def p_program(p):
                 | program_item program
     """
 
+    if len(p) == 2:
+        p[0] = AbsSintax.ProgramProgramItem(p[1])
+    else:
+        p[0] = AbsSintax.ProgramMultipleProgramItem(p[1], p[2])
+
 
 def p_program_variable_declaration(p):
     """
         program_item : variable_declaration_list SEMICOLON
     """
+    p[0] = AbsSintax.ProgramItemVairableDeclaration(p[1])
 
 
 def p_program_function(p):
     """
         program_item : function
     """
+    p[0] = AbsSintax.ProgramItemFunction(p[1])
 
 
 def p_program_assign(p):
     """
         program_item : global_assign_identifier_list
     """
+    p[0] = AbsSintax.ProgramItemAssign(p[1])
 
 
 def p_program_type(p):
     """
         program_item : type SEMICOLON
     """
+    p[0] = AbsSintax.ProgramItemType(p[1])
 
 
 def p_global_assign_identifier_list(p):
@@ -38,6 +48,10 @@ def p_global_assign_identifier_list(p):
         global_assign_identifier_list : IDENTIFIER ASSIGN expression
                                       | IDENTIFIER ASSIGN expression COMMA global_assign_identifier_list
     """
+    if len(p) == 4:
+        p[0] = AbsSintax.GlobalAssignMultiplesIdentifiers(p[1], p[3], None)
+    else:
+        p[0] = AbsSintax.GlobalAssignMultiplesIdentifiers(p[1], p[3], p[5])
 
 
 # Copiado do java
@@ -46,6 +60,10 @@ def p_block(p):
         block : LBRACE RBRACE
               | LBRACE block_statements RBRACE
     """
+    if len(p) == 3:
+        p[0] = AbsSintax.BlockToEmptyBlock()
+    else:
+        p[0] = AbsSintax.BlockToBlockWithStatements(p[2])
 
 
 def p_block_statements(p):
@@ -53,12 +71,17 @@ def p_block_statements(p):
         block_statements : block_statement
                         | block_statements block_statement
     """
+    if len(p) == 2:
+        p[0] = AbsSintax.BlockStatementsToBlockStatement(p[1])
+    else:
+        p[0] = AbsSintax.BlockStatementsToMultipleBlockStatements(p[1], p[2])
 
 
 def p_block_statement(p):
     """
         block_statement : statement
     """
+    p[0] = AbsSintax.BlockStatementToStatement(p[1])
 
 
 def p_statement(p):
@@ -247,6 +270,7 @@ def p_number_id(p):
 def p_value_list(p):
     """
         value_list : LBRACE value_list_item RBRACE
+                    | LBRACE RBRACE
     """
 
 
@@ -300,20 +324,6 @@ def p_assign_identifier_list_non_array(p):
     """
 
 
-def p_function_pointer(p):
-    """
-        function_pointer : identifier LPAREN signature_param_list RPAREN
-                         | identifier LPAREN RPAREN
-    """
-
-
-def p_function_pointer_array(p):
-    """
-        function_pointer_array : LPAREN TIMES identifier multiple_bracket_signature RPAREN LPAREN signature_param_list RPAREN
-                               | LPAREN TIMES identifier multiple_bracket_signature RPAREN LPAREN RPAREN
-    """
-
-
 def p_identifier_list_function_pointer(p):
     """
         identifier_list : function_pointer
@@ -342,6 +352,20 @@ def p_identifier_list_function_pointer_array_assing(p):
     """
 
 
+def p_function_pointer(p):
+    """
+        function_pointer : identifier LPAREN signature_param_list RPAREN
+                         | identifier LPAREN RPAREN
+    """
+
+
+def p_function_pointer_array(p):
+    """
+        function_pointer_array : LPAREN TIMES identifier multiple_bracket_signature RPAREN LPAREN signature_param_list RPAREN
+                               | LPAREN TIMES identifier multiple_bracket_signature RPAREN LPAREN RPAREN
+    """
+
+
 def p_identifier(p):
     """
         identifier :  IDENTIFIER
@@ -355,64 +379,6 @@ def p_type(p):
         type : user_types
              | primitive_types
              | type_modifier type
-    """
-
-
-def p_struct_declaration(p):
-    """
-        struct_declaration :  KEYWORD_STRUCT IDENTIFIER LBRACE RBRACE
-                            | KEYWORD_STRUCT IDENTIFIER LBRACE struct_or_union_member_list RBRACE
-                            | KEYWORD_STRUCT LBRACE RBRACE
-                            | KEYWORD_STRUCT LBRACE struct_or_union_member_list RBRACE
-                            | KEYWORD_STRUCT IDENTIFIER
-    """
-
-
-def p_union_declaration(p):
-    """
-        union_declaration :   KEYWORD_UNION IDENTIFIER LBRACE RBRACE
-                            | KEYWORD_UNION IDENTIFIER LBRACE struct_or_union_member_list RBRACE
-                            | KEYWORD_UNION LBRACE RBRACE
-                            | KEYWORD_UNION LBRACE struct_or_union_member_list RBRACE
-                            | KEYWORD_UNION IDENTIFIER
-    """
-
-
-def p_struct_or_union_member_list(p):
-    """
-        struct_or_union_member_list : variable_declaration_list_no_assign SEMICOLON
-                                   | variable_declaration_list_no_assign SEMICOLON struct_or_union_member_list
-
-    """
-
-
-def p_variable_declaration_list_no_assign(p):
-    """
-        variable_declaration_list_no_assign : type variable_list_no_assign
-    """
-
-
-def p_variable_list_no_assign(p):
-    """
-        variable_list_no_assign : identifier
-                                | variable_list_no_assign COMMA identifier
-    """
-
-
-def p_enum_declaration(p):
-    """
-        enum_declaration : KEYWORD_ENUM LBRACE enum_item_list RBRACE
-                         | KEYWORD_ENUM IDENTIFIER LBRACE enum_item_list RBRACE
-                         | KEYWORD_ENUM IDENTIFIER
-    """
-
-
-def p_enum_item_list(p):
-    """
-        enum_item_list : IDENTIFIER
-                        | IDENTIFIER COMMA enum_item_list
-                        | IDENTIFIER ASSIGN expression
-                        | IDENTIFIER ASSIGN expression COMMA enum_item_list
     """
 
 
@@ -446,6 +412,64 @@ def p_primitive_types(p):
                         | TYPE_FLOAT
                         | TYPE_DOUBLE
                         | TYPE_VOID
+    """
+
+
+def p_struct_declaration(p):
+    """
+        struct_declaration :  KEYWORD_STRUCT IDENTIFIER LBRACE RBRACE
+                            | KEYWORD_STRUCT IDENTIFIER LBRACE struct_or_union_member_list RBRACE
+                            | KEYWORD_STRUCT LBRACE RBRACE
+                            | KEYWORD_STRUCT LBRACE struct_or_union_member_list RBRACE
+                            | KEYWORD_STRUCT IDENTIFIER
+    """
+
+
+def p_union_declaration(p):
+    """
+        union_declaration :   KEYWORD_UNION IDENTIFIER LBRACE RBRACE
+                            | KEYWORD_UNION IDENTIFIER LBRACE struct_or_union_member_list RBRACE
+                            | KEYWORD_UNION LBRACE RBRACE
+                            | KEYWORD_UNION LBRACE struct_or_union_member_list RBRACE
+                            | KEYWORD_UNION IDENTIFIER
+    """
+
+
+def p_enum_declaration(p):
+    """
+        enum_declaration : KEYWORD_ENUM LBRACE enum_item_list RBRACE
+                         | KEYWORD_ENUM IDENTIFIER LBRACE enum_item_list RBRACE
+                         | KEYWORD_ENUM IDENTIFIER
+    """
+
+
+def p_struct_or_union_member_list(p):
+    """
+        struct_or_union_member_list : variable_declaration_list_no_assign SEMICOLON
+                                   | variable_declaration_list_no_assign SEMICOLON struct_or_union_member_list
+
+    """
+
+
+def p_variable_declaration_list_no_assign(p):
+    """
+        variable_declaration_list_no_assign : type variable_list_no_assign
+    """
+
+
+def p_variable_list_no_assign(p):
+    """
+        variable_list_no_assign : identifier
+                                | variable_list_no_assign COMMA identifier
+    """
+
+
+def p_enum_item_list(p):
+    """
+        enum_item_list : IDENTIFIER
+                        | IDENTIFIER COMMA enum_item_list
+                        | IDENTIFIER ASSIGN expression
+                        | IDENTIFIER ASSIGN expression COMMA enum_item_list
     """
 
 
@@ -588,7 +612,6 @@ def p_less_equals_exp(p):
     """
         less_equals_exp : less_equals_exp LESS_EQUALS left_shift_exp
                         | left_shift_exp
-
     """
 
 
@@ -641,6 +664,17 @@ def p_modulus_exp(p):
     """
 
 
+def p_unary_operator(p):
+    """
+        unary_operator : BITWISE_AND
+                       | TIMES
+                       | PLUS
+                       | MINUS
+                       | BITWISE_COMPLEMENT
+                       | NOT
+    """
+
+
 # Shift reduce
 def p_unary_exp(p):
     """
@@ -667,17 +701,6 @@ def p_cast_exp(p):
     """
         cast_exp : LPAREN type RPAREN
                  | LPAREN type multiple_times RPAREN
-    """
-
-
-def p_unary_operator(p):
-    """
-        unary_operator : BITWISE_AND
-                       | TIMES
-                       | PLUS
-                       | MINUS
-                       | BITWISE_COMPLEMENT
-                       | NOT
     """
 
 
@@ -733,6 +756,7 @@ def p_parentesis_exp(p):
     """
         parentesis_exp : LPAREN expression RPAREN
     """
+
     
 def p_error(p):
     if p:
