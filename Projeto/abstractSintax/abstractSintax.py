@@ -400,7 +400,7 @@ class IfThenStatement(metaclass=ABCMeta):
         pass
 
 
-class ConcreteIfThenStatement(IfThenStatement):
+class IfThenStatementConcrete(IfThenStatement):
     def __init__(self, expression, statement):
         self.expression = expression
         self.statement = statement
@@ -417,7 +417,7 @@ class IfThenElseStatement(metaclass=ABCMeta):
         pass
 
 
-class ConcreteIfThenElseStatement(IfThenElseStatement):
+class IfThenElseStatementConcrete(IfThenElseStatement):
     def __init__(self, expression, statement_no_short_if, statement):
         self.expression = expression
         self.statement_no_short_if = statement_no_short_if
@@ -434,7 +434,7 @@ class IfThenElseStatementNoShortIf(metaclass=ABCMeta):
         pass
 
 
-class ConcreteIfThenElseStatementNoShortIf(IfThenElseStatementNoShortIf):
+class IfThenElseStatementNoShortIfConcrete(IfThenElseStatementNoShortIf):
     def __init__(self, expression, statement_no_short_if_true, statement_no_short_if_false):
         self.expression = expression
         self.statement_no_short_if_true = statement_no_short_if_true
@@ -452,7 +452,7 @@ class WhileStatement(metaclass=ABCMeta):
         pass
 
 
-class ConcreteWhileStatement(WhileStatement):
+class WhileStatementConcrete(WhileStatement):
     def __init__(self, expression, statement):
         self.expression = expression
         self.statement = statement
@@ -469,7 +469,7 @@ class WhileStatementNoShortIf(metaclass=ABCMeta):
         pass
 
 
-class ConcreteWhileStatementNoShortIf(WhileStatementNoShortIf):
+class WhileStatementNoShortIfConcrete(WhileStatementNoShortIf):
     def __init__(self, expression, statement_no_short_if):
         self.expression = expression
         self.statement_no_short_if = statement_no_short_if
@@ -486,7 +486,7 @@ class DoStatement(metaclass=ABCMeta):
         pass
 
 
-class ConcreteDoStatement(DoStatement):
+class DoStatementConcrete(DoStatement):
     def __init__(self, statement, expression):
         self.statement = statement
         self.expression = expression
@@ -558,7 +558,7 @@ class ForStatement(metaclass=ABCMeta):
         pass
 
 
-class ConcreteForStatement(ForStatement):
+class ForStatementConcrete(ForStatement):
     def __init__(self, for_params, statement):
         self.for_params = for_params
         self.statement = statement
@@ -575,7 +575,7 @@ class ForStatementNoShortIf(metaclass=ABCMeta):
         pass
 
 
-class ConcreteForStatementNoShortIf(ForStatementNoShortIf):
+class ForStatementNoShortIfConcrete(ForStatementNoShortIf):
     def __init__(self, for_params, statement_no_short_if):
         self.for_params = for_params
         self.statement_no_short_if = statement_no_short_if
@@ -592,7 +592,7 @@ class SwitchStatement(metaclass=ABCMeta):
         pass
 
 
-class ConcreteSwitchStatement(SwitchStatement):
+class SwitchStatementConcrete(SwitchStatement):
     def __init__(self, expression, switch_itens):
         self.expression = expression
         self.switch_itens = switch_itens
@@ -664,7 +664,7 @@ class Function(metaclass=ABCMeta):
         pass
 
 
-class ConcreteFunction(Function):
+class FunctionConcrete(Function):
     def __init__(self, function_signature, block):
         self.function_signature = function_signature
         self.block = block
@@ -709,7 +709,7 @@ class TripleDot(metaclass=ABCMeta):
         pass
 
 
-class ConcreteTripleDot(TripleDot):
+class TripleDotConcrete(TripleDot):
     def __init__(self):
         pass
 
@@ -836,7 +836,7 @@ class BracketWithBounds(metaclass=ABCMeta):
         pass
 
 
-class ConcreteBracketWithBounds(BracketWithBounds):
+class BracketWithBoundsConcrete(BracketWithBounds):
     def __init__(self, number_id):
         self.number_id = number_id
 
@@ -1556,7 +1556,7 @@ class ExpressionList(metaclass=ABCMeta):
 
 
 class ExpressionListConcrete(ExpressionList):
-    def __init__(self, expression, next_expressions):
+    def __init__(self, expression, next_expressions=None):
         self.expression = expression
         self.next_expressions = next_expressions
 
@@ -1741,7 +1741,7 @@ class LogicalAndExpressionRecursion(LogicalAndExpression):
         pass
 
 
-class LogicalAndExpressionToOrExpression(LogicalAndExpression):
+class LogicalAndExpressionToBitwiseOrExpression(LogicalAndExpression):
     def __init__(self, bitwise_or_exp):
         self.bitwise_or_exp = bitwise_or_exp
 
@@ -1770,7 +1770,7 @@ class BitwiseOrExpressionRecursion(BitwiseOrExpression):
         pass
 
 
-class BitwiseOrExpressionToXorExpression(BitwiseOrExpression):
+class BitwiseOrExpressionToXorBitwiseExpression(BitwiseOrExpression):
     def __init__(self, bitwise_xor_exp):
         self.bitwise_xor_exp = bitwise_xor_exp
 
@@ -1799,7 +1799,7 @@ class BitwiseXorExpressionRecursion(BitwiseXorExpression):
         pass
 
 
-class BitwiseXorExpressionToAndExpression(BitwiseXorExpression):
+class BitwiseXorExpressionToBitwiseAndExpression(BitwiseXorExpression):
     def __init__(self, bitwise_and_exp):
         self.bitwise_and_exp = bitwise_and_exp
 
@@ -2279,7 +2279,7 @@ class UnaryPreDecrementPostfixExpression(UnaryExpression):
         pass
 
 
-class UnaryPosIncrementPostfixExpression(UnaryExpression):
+class UnaryPostIncrementPostfixExpression(UnaryExpression):
     def __init__(self, postfix_exp):
         self.postfix_exp = postfix_exp
 
@@ -2287,7 +2287,7 @@ class UnaryPosIncrementPostfixExpression(UnaryExpression):
         pass
 
 
-class UnaryPosDecrementPostfixExpression(UnaryExpression):
+class UnaryPostDecrementPostfixExpression(UnaryExpression):
     def __init__(self, postfix_exp):
         self.postfix_exp = postfix_exp
 
@@ -2432,7 +2432,7 @@ class PostfixExpressionArrow(PostfixExpression):
         pass
 
 
-class PostifixToPrimaryExpression(PostfixExpression):
+class PostfixToPrimaryExpression(PostfixExpression):
     def __init__(self, primary_exp):
         self.primary_exp = primary_exp
 
@@ -2597,6 +2597,5 @@ class ParenthesisExpressionConcrete(ParenthesisExpression):
     def __init__(self, expression):
         self.expression = expression
 
-    @abstractmethod
     def accept(self, visitor):
         pass
