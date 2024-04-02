@@ -6,6 +6,23 @@ from abc import ABCMeta
             | program_item program
 """
 
+tab = 0
+
+
+def increment_tab():
+    global tab
+    tab += 1
+
+
+def decrement_tab():
+    global tab
+    tab -= 1
+
+
+def print_tab():
+    global tab
+    print(("\t" * tab), end='')
+
 
 class Program(metaclass=ABCMeta):
     @abstractmethod
@@ -20,6 +37,9 @@ class ProgramProgramItem(Program):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.program_item.print()
+
 
 class ProgramMultipleProgramItem(Program):
     def __init__(self, program_item, program):
@@ -27,7 +47,13 @@ class ProgramMultipleProgramItem(Program):
         self.program = program
 
     def accept(self, visitor):
+        self.program_item.accept(visitor)
+        self.program.accept(visitor)
         pass
+
+    def print(self):
+        self.program_item.print()
+        self.program.print()
 
 
 class ProgramItem(metaclass=ABCMeta):
@@ -45,7 +71,12 @@ class ProgramItemVairableDeclaration(ProgramItem):
         self.variable_declaration_list = variable_declaration_list
 
     def accept(self, visitor):
+        self.variable_declaration_list.accept(visitor)
         pass
+
+    def print(self):
+        self.variable_declaration_list.print()
+        print(';')
 
 
 """
@@ -58,6 +89,10 @@ class ProgramItemFunction(ProgramItem):
         self.funcion = function
 
     def accept(self, visitor):
+        pass
+
+    def print(self):
+        self.funcion.print()
         pass
 
 
@@ -73,6 +108,10 @@ class ProgramItemAssign(ProgramItem):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.global_assign_identifier_list.print()
+        print(";")
+
 
 """
     program_item : type SEMICOLON
@@ -85,6 +124,10 @@ class ProgramItemType(ProgramItem):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.type.print()
+        print(";")
 
 
 """
@@ -107,6 +150,11 @@ class GlobalAssignOneIdentifier(GlobalAssign):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print(self.identifier, end='')
+        print(" = ", end='')
+        self.expression.print()
+
 
 class GlobalAssignMultiplesIdentifiers(GlobalAssign):
     def __init__(self, identifier, expression, global_assign_identifier_list):
@@ -116,6 +164,15 @@ class GlobalAssignMultiplesIdentifiers(GlobalAssign):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print(self.identifier, end='')
+        print(" = ", end='')
+        self.expression.print()
+
+        if self.global_assign_identifier_list is not None:
+            print(", ", end='')
+            self.global_assign_identifier_list.print()
 
 
 """
@@ -136,6 +193,10 @@ class BlockToEmptyBlock(Block):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print(" {\n")
+        print("}")
+
 
 class BlockToBlockWithStatements(Block):
     def __init__(self, block_statements):
@@ -143,6 +204,13 @@ class BlockToBlockWithStatements(Block):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print(" {")
+        print_tab()
+        self.block_statements.print()
+
+        print("}")
 
 
 # block_statements : block_statement
@@ -160,6 +228,9 @@ class BlockStatementsToBlockStatement(BlockStatements):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.block_statement.print()
+
 
 class BlockStatementsToMultipleBlockStatements(BlockStatements):
     def __init__(self, block_statements, block_statement):
@@ -168,6 +239,10 @@ class BlockStatementsToMultipleBlockStatements(BlockStatements):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.block_statements.print()
+        self.block_statement.print()
 
 
 # block_statement : statement
@@ -183,6 +258,9 @@ class BlockStatementToStatement(BlockStatement):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.statement.print()
 
 
 # statement → statement_without_trailing_substatement
@@ -203,6 +281,9 @@ class StatementToStatementWithoutTrailingSubstatement(Statement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.statement_without_trailing_substatement.print()
+
 
 class StatementToIfThenStatement(Statement):
     def __init__(self, if_then_statement):
@@ -210,6 +291,9 @@ class StatementToIfThenStatement(Statement):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.if_then_statement.print()
 
 
 class StatementToIfThenElseStatement(Statement):
@@ -227,6 +311,9 @@ class StatementToWhileStatement(Statement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.while_statement.print()
+
 
 class StatementToForStatement(Statement):
     def __init__(self, for_statement):
@@ -234,6 +321,9 @@ class StatementToForStatement(Statement):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.for_statement.print()
 
 
 # statement_without_trailing_substatement → block
@@ -261,6 +351,9 @@ class SWTSToBlockStatement(StatementWithoutTrailingSubstatement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.block.print()
+
 
 class SWTSToSemicolonStatement(StatementWithoutTrailingSubstatement):
     def __init__(self):
@@ -277,6 +370,10 @@ class SWTSToExpressionListStatement(StatementWithoutTrailingSubstatement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.expression_list.print()
+        print(";")
+
 
 class SWTSToSwitchStatement(StatementWithoutTrailingSubstatement):
     def __init__(self, switch_stm):
@@ -292,6 +389,9 @@ class SWTSToDoStatement(StatementWithoutTrailingSubstatement):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.do_statement.print()
 
 
 class SWTSToBreakStatement(StatementWithoutTrailingSubstatement):
@@ -408,6 +508,12 @@ class IfThenStatementConcrete(IfThenStatement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print("if (", end='')
+        self.expression.print()
+        print(")", end='')
+        self.statement.print()
+
 
 # if_then_else_statement : KEYWORD_IF LPAREN expression RPAREN statement_no_short_if KEYWORD_ELSE statement
 
@@ -460,6 +566,12 @@ class WhileStatementConcrete(WhileStatement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print("while(", end='')
+        self.expression.print()
+        print(")")
+        self.statement.print()
+
 
 # while_statement_no_short_if : KEYWORD_WHILE LPAREN expression RPAREN statement_no_short_if
 
@@ -494,6 +606,14 @@ class DoStatementConcrete(DoStatement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print("do")
+        self.statement.print()
+
+        print("while(", end='')
+        self.expression.print()
+        print(");")
+
 
 # for_params : variable_declaration_list SEMICOLON for_param
 #            | variable_declaration_list SEMICOLON for_param expression_list
@@ -514,6 +634,14 @@ class ForParamsWithVariableDeclaration(ForParams):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.variable_declaration_list.print()
+        print(";", end='')
+        self.for_param.print()
+        print(";", end='')
+        if self.expression_list is not None:
+            self.expression_list.print()
+
 
 class ForParamsWithoutVariableDeclaration(ForParams):
     def __init__(self, for_param1, for_param2, expression_list=None):
@@ -523,6 +651,14 @@ class ForParamsWithoutVariableDeclaration(ForParams):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.for_param1.print()
+        print(";", end='')
+        self.for_param2.print()
+        print(";", end='')
+        if self.expression_list is not None:
+            self.expression_list.print()
 
 
 # for_param : SEMICOLON
@@ -541,6 +677,9 @@ class SemicolonForParam(ForParam):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        pass
+
 
 class ExpressionListForParam(ForParam):
     def __init__(self, expression_list):
@@ -548,6 +687,9 @@ class ExpressionListForParam(ForParam):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.expression_list.print()
 
 
 # for_statement : KEYWORD_FOR LPAREN for_params RPAREN statement
@@ -565,6 +707,12 @@ class ForStatementConcrete(ForStatement):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print("for(", end='')
+        self.for_params.print()
+        print(")")
+        self.statement.print()
 
 
 # for_statement_no_short_if : KEYWORD_FOR LPAREN for_params RPAREN statement_no_short_if
@@ -672,6 +820,12 @@ class FunctionConcrete(Function):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        increment_tab()
+        self.function_signature.print()
+        self.block.print()
+        decrement_tab()
+
 
 # function_signature : type identifier LPAREN signature_param_list RPAREN
 #                    | type identifier LPAREN RPAREN
@@ -691,6 +845,15 @@ class FunctionSignatureWithParams(FunctionSignature):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.type.print()
+        print(" ", end='')
+        self.identifier.print()
+
+        print('(', end='')
+        self.signature_param_list.print()
+        print(')', end='')
+
 
 class FunctionSignatureWithoutParams(FunctionSignature):
     def __init__(self, _type, identifier):
@@ -700,9 +863,15 @@ class FunctionSignatureWithoutParams(FunctionSignature):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.type.print()
+        print(" ", end='')
+        self.identifier.print()
+        print('(', end='')
+        print(')', end='')
+
 
 # triple_dot : DOT DOT DOT
-
 class TripleDot(metaclass=ABCMeta):
     @abstractmethod
     def accept(self, visitor):
@@ -934,6 +1103,11 @@ class VariableDeclarationListConcrete(VariableDeclarationList):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.type.print()
+        print(' ', end='')
+        self.identifier_list.print()
+
 
 class IdentifierList(metaclass=ABCMeta):
     @abstractmethod
@@ -986,6 +1160,15 @@ class IdentifierWithAssignList(IdentifierList):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.identifier.print()
+        print(' = ', end='')
+        self.expression.print()
+
+        if self.identifier_list is not None:
+            print(', ', end='')
+            self.identifier_list.print()
 
 
 """
@@ -1145,6 +1328,9 @@ class IdentifierOnly(Identifier):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print(self.identifier, end='')
+
 
 class IdentifierTimesIdentifier(Identifier):
     def __init__(self, identifier):
@@ -1182,6 +1368,9 @@ class TypeUserType(Type):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.user_types.print()
+
 
 class TypePrimitiveType(Type):
     def __init__(self, primitive_type):
@@ -1189,6 +1378,9 @@ class TypePrimitiveType(Type):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.primitive_type.print()
 
 
 """
@@ -1245,6 +1437,9 @@ class StructDeclarationUserType(UserTypes):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.struct_declaration.print()
+
 
 class UnionDeclarationUserType(UserTypes):
     def __init__(self, union_declaration):
@@ -1253,6 +1448,9 @@ class UnionDeclarationUserType(UserTypes):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.union_declaration.print()
+
 
 class EnumDeclarationUserType(UserTypes):
     def __init__(self, enum_declaration):
@@ -1260,6 +1458,9 @@ class EnumDeclarationUserType(UserTypes):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.enum_declaration.print()
 
 
 """
@@ -1286,6 +1487,9 @@ class PrimitiveTypeConcrete(PrimitiveType):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print(self.primitive_type, end='')
+
 
 """
     struct_declaration :  KEYWORD_STRUCT IDENTIFIER LBRACE RBRACE
@@ -1310,6 +1514,12 @@ class NamedStructDeclaration(StructDeclaration):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print("struct ", self.identifier, " {")
+        if self.member_list is not None:
+            self.member_list.print()
+        print("}", end='')
+
 
 class UnamedStructDeclaration(StructDeclaration):
     def __init__(self, member_list=None):
@@ -1318,6 +1528,12 @@ class UnamedStructDeclaration(StructDeclaration):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print("struct {")
+        if self.member_list is not None:
+            self.member_list.print()
+        print("}", end='')
+
 
 class StructDeclarationOnlyIdentifier(StructDeclaration):
     def __init__(self, identifier):
@@ -1325,6 +1541,9 @@ class StructDeclarationOnlyIdentifier(StructDeclaration):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print("struct ", self.identifier, end='')
 
 
 """
@@ -1350,6 +1569,12 @@ class NamedUnionDeclaration(UnionDeclaration):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print("union ", self.identifier, " {")
+        if self.member_list is not None:
+            self.member_list.print()
+        print("}", end='')
+
 
 class UnamedUnionDeclaration(UnionDeclaration):
     def __init__(self, member_list=None):
@@ -1358,6 +1583,12 @@ class UnamedUnionDeclaration(UnionDeclaration):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print("union {")
+        if self.member_list is not None:
+            self.member_list.print()
+        print("}", end='')
+
 
 class UnionDeclarationOnlyIdentifier(UnionDeclaration):
     def __init__(self, identifier):
@@ -1365,6 +1596,9 @@ class UnionDeclarationOnlyIdentifier(UnionDeclaration):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print("union ", self.identifier, end='')
 
 
 """
@@ -1388,6 +1622,11 @@ class NamedEnumDeclaration(EnumDeclaration):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print("enum", self.identifier, "{ ")
+        self.member_list.print()
+        print("}", end='')
+
 
 class UnamedEnumDeclaration(EnumDeclaration):
     def __init__(self, member_list):
@@ -1396,6 +1635,11 @@ class UnamedEnumDeclaration(EnumDeclaration):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print("enum { ")
+        self.member_list.print()
+        print("}", end='')
+
 
 class EnumDeclarationOnlyIdentifier(EnumDeclaration):
     def __init__(self, identifier):
@@ -1403,6 +1647,9 @@ class EnumDeclarationOnlyIdentifier(EnumDeclaration):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print("enum ", self.identifier, end='')
 
 
 """
@@ -1426,6 +1673,11 @@ class StructOrUnionMemberListConcrete(StructOrUnionMemberList):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.variable_declaration_list_no_assign.print()
+        if self.next_struct_or_union_member_list is not None:
+            self.next_struct_or_union_member_list.print()
+
 
 """
     variable_declaration_list_no_assign : type variable_list_no_assign
@@ -1445,6 +1697,12 @@ class VariableDeclarationListNoAssignConcrete(VariableDeclarationListNoAssign):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.type.print()
+        print(" ", end='')
+        self.variable_list_no_assign.print()
+        print(";")
 
 
 """
@@ -1466,6 +1724,12 @@ class VariableListNoAssignConcrete(VariableListNoAssign):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.identifier.print()
+        if self.next_variable_list_no_assign is not None:
+            print(", ", end='')
+            self.next_variable_list_no_assign.print()
 
 
 """
@@ -1490,6 +1754,14 @@ class EnumItemListIdentifier(EnumItemList):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print(self.identifier, end='')
+        if self.next_enum_item_list is not None:
+            print(", ", end='')
+            self.next_enum_item_list.print()
+        else:
+            print()
+
 
 class EnumItemListIdentifierAssignExpression(EnumItemList):
     def __init__(self, identifier, expression, next_enum_item_list=None):
@@ -1499,6 +1771,15 @@ class EnumItemListIdentifierAssignExpression(EnumItemList):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print(self.identifier, '= ', end='')
+        self.expression.print()
+        if self.next_enum_item_list is not None:
+            print(", ", end='')
+            self.next_enum_item_list.print()
+        else:
+            print()
 
 
 """
@@ -1519,6 +1800,11 @@ class MultipleTimesConcrete(MultipleTimes):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print('*', end='')
+        if self.next_times is not None:
+            self.next_times.print()
 
 
 """
@@ -1542,6 +1828,9 @@ class IntegerNumberConcrete(IntegerNumber):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print(self.number, end='')
+
 
 """
     expression_list : expression
@@ -1563,6 +1852,12 @@ class ExpressionListConcrete(ExpressionList):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.expression.print()
+        if self.next_expressions is not None:
+            print(", ", end='')
+            self.next_expressions.print()
+
 
 """
     expression : assign_exp
@@ -1581,6 +1876,9 @@ class ExpressionConcrete(Expression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.assign_exp.print()
 
 
 """
@@ -1611,6 +1909,9 @@ class AssignmentOperatorConcrete(AssignmentOperator):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print(self.operator, end='')
+
 
 """
     assign_exp : unary_exp assign_operator assign_exp
@@ -1633,6 +1934,13 @@ class AssignExpressionRecursion(AssignExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.unary_exp.print()
+        print(' ', end='')
+        self.assign_operator.print()
+        print(' ', end='')
+        self.assign_exp.print()
+
 
 class AssignExpressionToTernary(AssignExpression):
     def __init__(self, ternary_expression):
@@ -1640,6 +1948,9 @@ class AssignExpressionToTernary(AssignExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.ternary_expression.print()
 
 
 """
@@ -1663,6 +1974,13 @@ class TernaryConditionalExpressionRecursion(TernaryConditionalExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.logical_expression.print()
+        print(" ? ", end='')
+        self.expression.print()
+        print(" : ", end='')
+        self.ternary_expression.print()
+
 
 class TernaryConditionalExpressionToLogicalExpression(TernaryConditionalExpression):
     def __init__(self, logical_exp):
@@ -1670,6 +1988,9 @@ class TernaryConditionalExpressionToLogicalExpression(TernaryConditionalExpressi
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.logical_exp.print()
 
 
 """
@@ -1689,6 +2010,9 @@ class LogicalExpressionConcrete(LogicalExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.logical_or_exp.print()
 
 
 """
@@ -1711,6 +2035,11 @@ class LogicalOrExpressionRecursion(LogicalOrExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.logical_or_exp.print()
+        print(" || ", end='')
+        self.logical_and_exp.print()
+
 
 class LogicalOrExpressionToAndExpression(LogicalOrExpression):
     def __init__(self, logical_and_exp):
@@ -1718,6 +2047,9 @@ class LogicalOrExpressionToAndExpression(LogicalOrExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.logical_and_exp.print()
 
 
 """
@@ -1740,6 +2072,11 @@ class LogicalAndExpressionRecursion(LogicalAndExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.logical_and_exp.print()
+        print(" && ", end='')
+        self.bitwise_or_exp.print()
+
 
 class LogicalAndExpressionToBitwiseOrExpression(LogicalAndExpression):
     def __init__(self, bitwise_or_exp):
@@ -1747,6 +2084,9 @@ class LogicalAndExpressionToBitwiseOrExpression(LogicalAndExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.bitwise_or_exp.print()
 
 
 """
@@ -1769,6 +2109,11 @@ class BitwiseOrExpressionRecursion(BitwiseOrExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.bitwise_or_exp.print()
+        print(" | ", end='')
+        self.bitwise_xor_exp.print()
+
 
 class BitwiseOrExpressionToXorBitwiseExpression(BitwiseOrExpression):
     def __init__(self, bitwise_xor_exp):
@@ -1776,6 +2121,9 @@ class BitwiseOrExpressionToXorBitwiseExpression(BitwiseOrExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.bitwise_xor_exp.print()
 
 
 """
@@ -1798,6 +2146,11 @@ class BitwiseXorExpressionRecursion(BitwiseXorExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.bitwise_xor_exp.print()
+        print(" ^ ", end='')
+        self.bitwise_and_exp.print()
+
 
 class BitwiseXorExpressionToBitwiseAndExpression(BitwiseXorExpression):
     def __init__(self, bitwise_and_exp):
@@ -1805,6 +2158,9 @@ class BitwiseXorExpressionToBitwiseAndExpression(BitwiseXorExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.bitwise_and_exp.print()
 
 
 """
@@ -1827,6 +2183,11 @@ class BitwiseAndExpressionRecursion(BitwiseAndExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.bitwise_and_exp.print()
+        print(" & ", end='')
+        self.is_equals_exp.print()
+
 
 class BitwiseAndExpressionToEqualsExpression(BitwiseAndExpression):
     def __init__(self, is_equals_exp):
@@ -1834,6 +2195,9 @@ class BitwiseAndExpressionToEqualsExpression(BitwiseAndExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.is_equals_exp.print()
 
 
 """
@@ -1856,6 +2220,11 @@ class IsEqualsExpressionRecursion(IsEqualsExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.is_equals_exp.print()
+        print(" == ", end='')
+        self.is_not_equals_exp.print()
+
 
 class IsEqualsExpressionToNotEqualsExpression(IsEqualsExpression):
     def __init__(self, is_not_equals_exp):
@@ -1863,6 +2232,9 @@ class IsEqualsExpressionToNotEqualsExpression(IsEqualsExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.is_not_equals_exp.print()
 
 
 """
@@ -1885,6 +2257,11 @@ class IsNotEqualsExpressionRecursion(IsNotEqualsExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.is_not_equals_exp.print()
+        print(" != ", end='')
+        self.greater_then_exp.print()
+
 
 class IsNotEqualsExpressionToGreaterThenExpression(IsNotEqualsExpression):
     def __init__(self, greater_then_exp):
@@ -1892,6 +2269,9 @@ class IsNotEqualsExpressionToGreaterThenExpression(IsNotEqualsExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.greater_then_exp.print()
 
 
 """
@@ -1914,6 +2294,11 @@ class GreaterThenExpressionRecursion(GreaterThenExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.greater_then_exp.print()
+        print(" > ", end='')
+        self.greater_equals_exp.print()
+
 
 class GreaterThenExpressionToGreaterEqualsExpression(GreaterThenExpression):
     def __init__(self, greater_equals_exp):
@@ -1921,6 +2306,9 @@ class GreaterThenExpressionToGreaterEqualsExpression(GreaterThenExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.greater_equals_exp.print()
 
 
 """
@@ -1943,6 +2331,11 @@ class GreaterEqualsExpressionRecursion(GreaterEqualsExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.greater_equals_exp.print()
+        print(" >= ", end='')
+        self.less_then_exp.print()
+
 
 class GreaterEqualsExpressionToLessThenExpression(GreaterEqualsExpression):
     def __init__(self, less_then_exp):
@@ -1950,6 +2343,9 @@ class GreaterEqualsExpressionToLessThenExpression(GreaterEqualsExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.less_then_exp.print()
 
 
 """
@@ -1972,6 +2368,11 @@ class LessThenExpressionRecursion(LessThenExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.less_then_exp.print()
+        print(" < ", end='')
+        self.less_equals_exp.print()
+
 
 class LessThenExpressionToLessEqualsExpression(LessThenExpression):
     def __init__(self, less_equals_exp):
@@ -1979,6 +2380,9 @@ class LessThenExpressionToLessEqualsExpression(LessThenExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.less_equals_exp.print()
 
 
 """
@@ -2001,6 +2405,11 @@ class LessEqualsExpressionRecursion(LessEqualsExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.less_equals_exp.print()
+        print(" <= ", end='')
+        self.left_shift_exp.print()
+
 
 class LessEqualsExpressionToLeftShiftExpression(LessEqualsExpression):
     def __init__(self, left_shift_exp):
@@ -2008,6 +2417,9 @@ class LessEqualsExpressionToLeftShiftExpression(LessEqualsExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.left_shift_exp.print()
 
 
 """
@@ -2030,6 +2442,11 @@ class LeftShiftExpressionRecursion(LeftShiftExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.left_shift_exp.print()
+        print(" << ", end='')
+        self.right_shift_exp.print()
+
 
 class LeftShiftExpressionToRightShiftExpression(LeftShiftExpression):
     def __init__(self, right_shift_exp):
@@ -2037,6 +2454,9 @@ class LeftShiftExpressionToRightShiftExpression(LeftShiftExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.right_shift_exp.print()
 
 
 """
@@ -2059,6 +2479,11 @@ class RightShiftExpressionRecursion(RightShiftExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.right_shift_exp.print()
+        print(" >> ", end='')
+        self.plus_exp.print()
+
 
 class RightShiftExpressionToPlusExpression(RightShiftExpression):
     def __init__(self, plus_exp):
@@ -2066,6 +2491,9 @@ class RightShiftExpressionToPlusExpression(RightShiftExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.plus_exp.print()
 
 
 """
@@ -2088,6 +2516,11 @@ class PlusExpressionRecursion(PlusExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.plus_exp.print()
+        print(" + ", end='')
+        self.minus_exp.print()
+
 
 class PlusExpressionToMinusExpression(PlusExpression):
     def __init__(self, minus_exp):
@@ -2095,6 +2528,9 @@ class PlusExpressionToMinusExpression(PlusExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.minus_exp.print()
 
 
 """
@@ -2117,6 +2553,11 @@ class MinusExpressionRecursion(MinusExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.minus_exp.print()
+        print(" - ", end='')
+        self.times_exp.print()
+
 
 class MinusExpressionToTimesExpression(MinusExpression):
     def __init__(self, times_exp):
@@ -2124,6 +2565,9 @@ class MinusExpressionToTimesExpression(MinusExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.times_exp.print()
 
 
 """
@@ -2146,6 +2590,11 @@ class TimesExpressionRecursion(TimesExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.times_exp.print()
+        print(" * ", end='')
+        self.divide_exp.print()
+
 
 class TimesExpressionToDivideExpression(TimesExpression):
     def __init__(self, divide_exp):
@@ -2153,6 +2602,9 @@ class TimesExpressionToDivideExpression(TimesExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.divide_exp.print()
 
 
 """
@@ -2175,6 +2627,11 @@ class DivideExpressionRecursion(DivideExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.divide_exp.print()
+        print(" / ", end='')
+        self.modulus_exp.print()
+
 
 class DivideExpressionToModulusExpression(DivideExpression):
     def __init__(self, modulus_exp):
@@ -2182,6 +2639,9 @@ class DivideExpressionToModulusExpression(DivideExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.modulus_exp.print()
 
 
 """
@@ -2204,6 +2664,11 @@ class ModulusExpressionRecursion(ModulusExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.modulus_exp.print()
+        print(" % ", end='')
+        self.unary_exp.print()
+
 
 class ModulusExpressionToUnaryExpression(ModulusExpression):
     def __init__(self, unary_exp):
@@ -2211,6 +2676,9 @@ class ModulusExpressionToUnaryExpression(ModulusExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.unary_exp.print()
 
 
 """
@@ -2235,6 +2703,9 @@ class UnaryOperatorConcrete(UnaryOperator):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print(self.operator, end='')
 
 
 """
@@ -2262,6 +2733,9 @@ class UnaryToPostifix(UnaryExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.postfix_exp.print()
+
 
 class UnaryPreIncrementPostfixExpression(UnaryExpression):
     def __init__(self, postfix_exp):
@@ -2269,6 +2743,10 @@ class UnaryPreIncrementPostfixExpression(UnaryExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print("++", end='')
+        self.postfix_exp.print()
 
 
 class UnaryPreDecrementPostfixExpression(UnaryExpression):
@@ -2278,6 +2756,10 @@ class UnaryPreDecrementPostfixExpression(UnaryExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print("--", end='')
+        self.postfix_exp.print()
+
 
 class UnaryPostIncrementPostfixExpression(UnaryExpression):
     def __init__(self, postfix_exp):
@@ -2286,6 +2768,10 @@ class UnaryPostIncrementPostfixExpression(UnaryExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.postfix_exp.print()
+        print("++", end='')
+
 
 class UnaryPostDecrementPostfixExpression(UnaryExpression):
     def __init__(self, postfix_exp):
@@ -2293,6 +2779,10 @@ class UnaryPostDecrementPostfixExpression(UnaryExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.postfix_exp.print()
+        print("--", end='')
 
 
 class UnaryCastExpressionPostfixExpression(UnaryExpression):
@@ -2303,6 +2793,11 @@ class UnaryCastExpressionPostfixExpression(UnaryExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.cast_exp.print()
+        print(" ", end='')
+        self.postfix_exp.print()
+
 
 class SizeofExpressionUnary(UnaryExpression):
     def __init__(self, sizeof_exp):
@@ -2310,6 +2805,9 @@ class SizeofExpressionUnary(UnaryExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.sizeof_exp.print()
 
 
 class UnaryOperatorUnaryExpression(UnaryExpression):
@@ -2319,6 +2817,10 @@ class UnaryOperatorUnaryExpression(UnaryExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.unary_operator.print()
+        self.unary_exp.print()
 
 
 """
@@ -2341,6 +2843,11 @@ class SizeofPostfixExpression(SizeofExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print("sizeof(", end='')
+        self.postfix_exp.print()
+        print(")", end='')
+
 
 class SizeofTypeExpression(SizeofExpression):
     def __init__(self, _type, multiple_times=None):
@@ -2349,6 +2856,13 @@ class SizeofTypeExpression(SizeofExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print("sizeof(", end='')
+        self.type.print()
+        if self.multiple_times is not None:
+            self.multiple_times.print()
+        print(")", end='')
 
 
 """
@@ -2370,6 +2884,13 @@ class CastExpressionType(CastExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print("(", end='')
+        self.type.print()
+        if self.multiple_times is not None:
+            self.multiple_times.print()
+        print(")", end='')
 
 
 """
@@ -2396,6 +2917,12 @@ class PostfixExpressionBracket(PostfixExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.postfix_exp.print()
+        print("[", end='')
+        self.expression.print()
+        print("]", end='')
+
 
 class PostfixExpressionFunctionCallNoParams(PostfixExpression):
     def __init__(self, postfix_exp):
@@ -2403,6 +2930,10 @@ class PostfixExpressionFunctionCallNoParams(PostfixExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.postfix_exp.print()
+        print("()", end='')
 
 
 class PostfixExpressionParenFunctionCall(PostfixExpression):
@@ -2413,6 +2944,12 @@ class PostfixExpressionParenFunctionCall(PostfixExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.postfix_exp.print()
+        print("(", end='')
+        self.function_call_parameters.print()
+        print(")", end='')
+
 
 class PostfixExpressionDot(PostfixExpression):
     def __init__(self, postfix_exp, identifier):
@@ -2421,6 +2958,11 @@ class PostfixExpressionDot(PostfixExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.postfix_exp.print()
+        print('.', end='')
+        print(self.identifier, end='')
 
 
 class PostfixExpressionArrow(PostfixExpression):
@@ -2431,6 +2973,11 @@ class PostfixExpressionArrow(PostfixExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.postfix_exp.print()
+        print('->', end='')
+        print(self.identifier, end='')
+
 
 class PostfixToPrimaryExpression(PostfixExpression):
     def __init__(self, primary_exp):
@@ -2438,6 +2985,9 @@ class PostfixToPrimaryExpression(PostfixExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.primary_exp.print()
 
 
 """
@@ -2460,6 +3010,12 @@ class FunctionCallParametersConcrete(FunctionCallParameters):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.expression.print()
+        if self.function_call_parameters is not None:
+            print(", ", end='')
+            self.function_call_parameters.print()
+
 
 """
     primary_exp : identifier_exp
@@ -2478,6 +3034,9 @@ class PrimaryExpressionConcrete(PrimaryExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.identifier_exp.print()
 
 
 """
@@ -2499,6 +3058,9 @@ class IdentifierExpressionToIdentifier(IdentifierExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print(self.identifier, end='')
+
 
 class IdentifierExpressionToString(IdentifierExpression):
     def __init__(self, string):
@@ -2506,6 +3068,9 @@ class IdentifierExpressionToString(IdentifierExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.string.print()
 
 
 """
@@ -2527,6 +3092,9 @@ class StringExpressionString(StringExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print(self.string, end='')
+
 
 class StringExpressionNumber(StringExpression):
     def __init__(self, number_exp):
@@ -2534,6 +3102,9 @@ class StringExpressionNumber(StringExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.number_exp.print()
 
 
 """
@@ -2557,6 +3128,9 @@ class NumberToIntegerNumberExpression(NumberExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.integer_number.print()
+
 
 class NumberToFloatNumberExpression(NumberExpression):
     def __init__(self, float_number):
@@ -2564,6 +3138,9 @@ class NumberToFloatNumberExpression(NumberExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print(self.float_number, end='')
 
 
 class NumberToCharacterExpression(NumberExpression):
@@ -2573,6 +3150,9 @@ class NumberToCharacterExpression(NumberExpression):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print(self.character, end='')
+
 
 class NumberToParentesisExpression(NumberExpression):
     def __init__(self, parentesis_expression):
@@ -2580,6 +3160,9 @@ class NumberToParentesisExpression(NumberExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.parentesis_expression.print()
 
 
 """
@@ -2599,3 +3182,8 @@ class ParenthesisExpressionConcrete(ParenthesisExpression):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print("(", end='')
+        self.expression.print()
+        print(")", end='')
