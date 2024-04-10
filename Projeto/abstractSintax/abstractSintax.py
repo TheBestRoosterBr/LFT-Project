@@ -6,23 +6,6 @@ from abc import ABCMeta
             | program_item program
 """
 
-tab = 0
-
-
-def increment_tab():
-    global tab
-    tab += 1
-
-
-def decrement_tab():
-    global tab
-    tab -= 1
-
-
-def print_tab():
-    global tab
-    print(("\t" * tab), end='')
-
 
 class Program(metaclass=ABCMeta):
     @abstractmethod
@@ -186,6 +169,7 @@ class Block(metaclass=ABCMeta):
         pass
 
 
+
 class BlockToEmptyBlock(Block):
     def __init__(self):
         pass
@@ -194,7 +178,7 @@ class BlockToEmptyBlock(Block):
         pass
 
     def print(self):
-        print(" {\n")
+        print("{\n")
         print("}")
 
 
@@ -206,10 +190,8 @@ class BlockToBlockWithStatements(Block):
         pass
 
     def print(self):
-        print(" {")
-        print_tab()
+        print("{")
         self.block_statements.print()
-
         print("}")
 
 
@@ -243,6 +225,7 @@ class BlockStatementsToMultipleBlockStatements(BlockStatements):
     def print(self):
         self.block_statements.print()
         self.block_statement.print()
+
 
 
 # block_statement : statement
@@ -303,6 +286,9 @@ class StatementToIfThenElseStatement(Statement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.if_then_else_statement.print()
+
 
 class StatementToWhileStatement(Statement):
     def __init__(self, while_statement):
@@ -362,6 +348,9 @@ class SWTSToSemicolonStatement(StatementWithoutTrailingSubstatement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print(";")
+
 
 class SWTSToExpressionListStatement(StatementWithoutTrailingSubstatement):
     def __init__(self, expression_list):
@@ -382,6 +371,9 @@ class SWTSToSwitchStatement(StatementWithoutTrailingSubstatement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.switch_stm.print()
+
 
 class SWTSToDoStatement(StatementWithoutTrailingSubstatement):
     def __init__(self, do_statement):
@@ -401,6 +393,9 @@ class SWTSToBreakStatement(StatementWithoutTrailingSubstatement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print("break;")
+
 
 class SWTSToContinueStatement(StatementWithoutTrailingSubstatement):
     def __init__(self):
@@ -408,6 +403,9 @@ class SWTSToContinueStatement(StatementWithoutTrailingSubstatement):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print("continue;")
 
 
 class SWTSToReturnStatement(StatementWithoutTrailingSubstatement):
@@ -417,6 +415,10 @@ class SWTSToReturnStatement(StatementWithoutTrailingSubstatement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.return_stm.print()
+        print(";")
+
 
 class SWTSToLabelStatement(StatementWithoutTrailingSubstatement):
     def __init__(self, identifier):
@@ -424,6 +426,9 @@ class SWTSToLabelStatement(StatementWithoutTrailingSubstatement):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print(self.identifier + ":")
 
 
 class SWTSToGotoStatement(StatementWithoutTrailingSubstatement):
@@ -433,6 +438,9 @@ class SWTSToGotoStatement(StatementWithoutTrailingSubstatement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print('goto', self.identifier + ";")
+
 
 class SWTSToVariableDeclarationStatement(StatementWithoutTrailingSubstatement):
     def __init__(self, variable_declaration_list):
@@ -441,6 +449,10 @@ class SWTSToVariableDeclarationStatement(StatementWithoutTrailingSubstatement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.variable_declaration_list.print()
+        print(";")
+
 
 class SWTSToTypeDeclarationStatement(StatementWithoutTrailingSubstatement):
     def __init__(self, _type):
@@ -448,6 +460,10 @@ class SWTSToTypeDeclarationStatement(StatementWithoutTrailingSubstatement):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.type.print()
+        print(";")
 
 
 # statement_no_short_if → statement_without_trailing_substatement
@@ -468,6 +484,9 @@ class SNSIStatementWithoutTrailingSubstatementNoShortIf(StatementNoShortIf):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.statement_without_trailing_substatement.print()
+
 
 class SNSIIfThenElseStatementNoShortIf(StatementNoShortIf):
     def __init__(self, if_then_else_statement_no_short_if):
@@ -475,6 +494,9 @@ class SNSIIfThenElseStatementNoShortIf(StatementNoShortIf):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.if_then_else_statement_no_short_if.print()
 
 
 class SNSIWhileStatementNoShortIf(StatementNoShortIf):
@@ -484,6 +506,9 @@ class SNSIWhileStatementNoShortIf(StatementNoShortIf):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.while_statement_no_short_if.print()
+
 
 class SNSIForStatementNoShortIf(StatementNoShortIf):
     def __init__(self, for_statement_no_short_if):
@@ -491,6 +516,9 @@ class SNSIForStatementNoShortIf(StatementNoShortIf):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.for_statement_no_short_if.print()
 
 
 # if_then_statement : KEYWORD_IF LPAREN expression RPAREN statement
@@ -532,6 +560,14 @@ class IfThenElseStatementConcrete(IfThenElseStatement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print('if(', end='')
+        self.expression.print()
+        print(")")
+        self.statement_no_short_if.print()
+        print("else")
+        self.statement.print()
+
 
 # if_then_else_statement_no_short_if : KEYWORD_IF LPAREN expression RPAREN statement_no_short_if KEYWORD_ELSE statement_no_short_if
 class IfThenElseStatementNoShortIf(metaclass=ABCMeta):
@@ -548,6 +584,14 @@ class IfThenElseStatementNoShortIfConcrete(IfThenElseStatementNoShortIf):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print('if(', end='')
+        self.expression.print()
+        print(")")
+        self.statement_no_short_if_true.print()
+        print("else")
+        self.statement_no_short_if_false.print()
 
 
 # while_statement : KEYWORD_WHILE LPAREN expression RPAREN statement
@@ -589,6 +633,12 @@ class WhileStatementNoShortIfConcrete(WhileStatementNoShortIf):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print("while(", end='')
+        self.expression.print()
+        print(')')
+        self.statement_no_short_if.print()
+
 
 # do_statement : KEYWORD_DO statement KEYWORD_WHILE LPAREN expression RPAREN SEMICOLON
 
@@ -609,7 +659,6 @@ class DoStatementConcrete(DoStatement):
     def print(self):
         print("do")
         self.statement.print()
-
         print("while(", end='')
         self.expression.print()
         print(");")
@@ -731,6 +780,12 @@ class ForStatementNoShortIfConcrete(ForStatementNoShortIf):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print("for(", end='')
+        self.for_params.print()
+        print(")")
+        self.statement_no_short_if.print()
+
 
 # switch_stm : KEYWORD_SWITCH LPAREN expression RPAREN LBRACE switch_itens RBRACE
 
@@ -747,6 +802,13 @@ class SwitchStatementConcrete(SwitchStatement):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print('switch(', end='')
+        self.expression.print()
+        print(") {")
+        self.switch_itens.print()
+        print('}')
 
 
 # switch_itens : KEYWORD_CASE expression COLON block_statements
@@ -769,6 +831,14 @@ class CaseSwitchItem(SwitchItems):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print('case ', end='')
+        self.expression.print()
+        print(":")
+        self.block_statements.print()
+        if self.next_switch_items is not None:
+            self.next_switch_items.print()
+
 
 class DefaultSwitchItem(SwitchItems):
     def __init__(self, block_statements, next_switch_items=None):
@@ -777,6 +847,9 @@ class DefaultSwitchItem(SwitchItems):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print("default;")
 
 
 # return_stm : KEYWORD_RETURN
@@ -795,6 +868,9 @@ class ReturnWithoutExpression(ReturnStatement):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print('return', end='')
+
 
 class ReturnWithExpression(ReturnStatement):
     def __init__(self, expression):
@@ -802,6 +878,10 @@ class ReturnWithExpression(ReturnStatement):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print("return ", end='')
+        self.expression.print()
 
 
 # function : function_signature block
@@ -821,10 +901,9 @@ class FunctionConcrete(Function):
         pass
 
     def print(self):
-        increment_tab()
         self.function_signature.print()
         self.block.print()
-        decrement_tab()
+
 
 
 # function_signature : type identifier LPAREN signature_param_list RPAREN
@@ -885,6 +964,9 @@ class TripleDotConcrete(TripleDot):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print('...', end='')
+
 
 # signature_param_list : signature_param COMMA signature_param_list
 #                      | signature_param
@@ -903,6 +985,11 @@ class SignatureParamListWithMoreParams(SignatureParamList):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.signature_param.print()
+        print(', ', end='')
+        self.signature_param_list.print()
+
 
 class SignatureParamListWithSingleParam(SignatureParamList):
     def __init__(self, signature_param):
@@ -910,6 +997,9 @@ class SignatureParamListWithSingleParam(SignatureParamList):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.signature_param.print()
 
 
 # signature_param : type
@@ -932,6 +1022,9 @@ class TypeOnlySignatureParam(SignatureParam):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.type.print()
+
 
 class TypeWithMultipleTimesSignatureParam(SignatureParam):
     def __init__(self, _type, multiple_times):
@@ -941,6 +1034,10 @@ class TypeWithMultipleTimesSignatureParam(SignatureParam):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.type.print()
+        self.multiple_times.print()
+
 
 class TypeWithMultipleBracketSignatureParam(SignatureParam):
     def __init__(self, _type, multiple_bracket_signature):
@@ -949,6 +1046,10 @@ class TypeWithMultipleBracketSignatureParam(SignatureParam):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.type.print()
+        self.multiple_bracket_signature.print()
 
 
 class TypeWithIdentifierSignatureParam(SignatureParam):
@@ -960,6 +1061,13 @@ class TypeWithIdentifierSignatureParam(SignatureParam):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.type.print()
+        print(' ', end='')
+        self.identifier.print()
+        if self.multiple_bracket_signature is not None:
+            self.multiple_bracket_signature.print()
+
 
 class TripleDotSignatureParam(SignatureParam):
     def __init__(self):
@@ -967,6 +1075,9 @@ class TripleDotSignatureParam(SignatureParam):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print('...', end='')
 
 
 # multiple_bracket_signature : LBRACKET RBRACKET multiple_bracket_signature
@@ -987,6 +1098,11 @@ class EmptyBracketMultipleBracketSignature(MultipleBracketSignature):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print('[]', end='')
+        if self.next_signature is not None:
+            self.next_signature.print()
+
 
 class BracketWithBoundsMultipleBracketSignature(MultipleBracketSignature):
     def __init__(self, bracket_with_bounds, next_signature=None):
@@ -995,6 +1111,11 @@ class BracketWithBoundsMultipleBracketSignature(MultipleBracketSignature):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.bracket_with_bounds.print()
+        if self.next_signature is not None:
+            self.next_signature.print()
 
 
 # bracket_with_bounds : LBRACKET number_id RBRACKET
@@ -1011,6 +1132,11 @@ class BracketWithBoundsConcrete(BracketWithBounds):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print('[', end='')
+        self.number_id.print()
+        print(']', end='')
 
 
 # number_id : IDENTIFIER
@@ -1029,6 +1155,9 @@ class IdentifierNumberId(NumberId):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print(self.identifier, end='')
+
 
 class IntegerNumberNumberId(NumberId):
     def __init__(self, integer_number):
@@ -1036,6 +1165,9 @@ class IntegerNumberNumberId(NumberId):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.integer_number.print()
 
 
 class ValueList(metaclass=ABCMeta):
@@ -1050,6 +1182,12 @@ class ValueListConcrete(ValueList):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print('{', end='')
+        if self.value_list_item is not None:
+            self.value_list_item.print()
+        print('}', end='')
 
 
 """
@@ -1082,6 +1220,12 @@ class ValueListItem(ValueListItem):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.value_list.print()
+        if self.next_items is not None:
+            print(", ", end='')
+            self.next_items.print()
 
 
 """
@@ -1129,6 +1273,12 @@ class IdentifierListConcrete(IdentifierList):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.identifier.print()
+        if self.identifier_list is not None:
+            print(", ", end='')
+            self.identifier_list.print()
+
 
 """
     identifier_list :  identifier multiple_bracket_signature
@@ -1144,6 +1294,12 @@ class IdentifierArrayList(IdentifierList):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.identifier.print()
+        self.multiple_bracket_signature.print()
+        if self.identifier_list is not None:
+            self.identifier_list.print()
 
 
 """
@@ -1187,6 +1343,16 @@ class IdentifierAssignArrayList(IdentifierList):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.identifier.print()
+        print(' = ', end='')
+        self.multiple_bracket_signature.print()
+        print(' = ', end='')
+        self.value_list.print()
+        if self.identifier_list is not None:
+            print(", ", end='')
+            self.identifier_list.print()
+
 
 """
     identifier_list : identifier ASSIGN value_list
@@ -1203,6 +1369,14 @@ class IdentifierAssignValueList(IdentifierList):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.identifier.print()
+        print(' = ', end='')
+        self.value_list.print()
+        if self.identifier_list is not None:
+            print(', ', end='')
+            self.identifier_list.print()
+
     """
         identifier_list : function_pointer
                         | function_pointer COMMA identifier_list
@@ -1216,6 +1390,12 @@ class IdentifierListFunctionPointer(IdentifierList):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.function_pointer.print()
+        if self.identifier_list is not None:
+            print(', ', end='')
+            self.identifier_list.print()
 
 
 """
@@ -1233,6 +1413,14 @@ class IdentifierListFunctionPointerAssign(IdentifierList):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.function_pointer.print()
+        print(' = ', end='')
+        self.expression.print();
+        if (self.identifier_list is not None):
+            print(', ', end='')
+            self.identifier_list.print()
+
 
 """
     identifier_list : function_pointer_array
@@ -1247,6 +1435,12 @@ class IdentifierListFunctionPointerArray(IdentifierList):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.function_pointer_array.print()
+        if self.identifier_list is not None:
+            print(', ', end='')
+            self.identifier_list.print()
 
 
 """
@@ -1263,6 +1457,14 @@ class IdentifierListFunctionPointerArrayAssign(IdentifierList):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        self.function_pointer_array.print()
+        print(" = ", end='')
+        self.value_list.print()
+        if self.identifier_list is not None:
+            print(', ', end='')
+            self.identifier_list.print()
 
 
 """
@@ -1285,6 +1487,13 @@ class FunctionPointerConcrete(FunctionPointer):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.identifier.print()
+        print('(', end='')
+        if self.signature_param_list is not None:
+            self.signature_param_list.print()
+        print(')', end='')
+
 
 """
     function_pointer_array : LPAREN TIMES identifier multiple_bracket_signature RPAREN LPAREN signature_param_list RPAREN
@@ -1306,6 +1515,16 @@ class FunctionPointerArrayConcrete(FunctionPointerArray):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print('(', end='')
+        self.identifier.print()
+        self.multiple_bracket_signature.print()
+        print(')', end='')
+        print('(', end='')
+        if self.signature_param_list is not None:
+            self.signature_param_list.print()
+        print(')', end='')
 
 
 """
@@ -1339,6 +1558,10 @@ class IdentifierTimesIdentifier(Identifier):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        print("*", end='')
+        self.identifier.print()
+
 
 class IdentifierWithParentesis(Identifier):
     def __init__(self, identifier):
@@ -1346,6 +1569,11 @@ class IdentifierWithParentesis(Identifier):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print("(", end='')
+        self.identifier.print()
+        print(")", end='')
 
 
 """
@@ -1402,6 +1630,10 @@ class TypeWithModifier(Type):
     def accept(self, visitor):
         pass
 
+    def print(self):
+        self.type_modifier.print()
+        self.type.print()
+
 
 class TypeModifier(metaclass=ABCMeta):
     @abstractmethod
@@ -1415,6 +1647,9 @@ class TypeModifierConcrete(TypeModifier):
 
     def accept(self, visitor):
         pass
+
+    def print(self):
+        print(self.type_modifier, end=' ')
 
 
 """
