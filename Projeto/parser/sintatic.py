@@ -31,7 +31,7 @@ def p_program_function(p):
 
 def p_program_assign(p):
     """
-        program_item : global_assign_identifier_list
+        program_item : global_assign_identifier_list SEMICOLON
     """
     p[0] = AbsSintax.ProgramItemAssign(p[1])
 
@@ -805,14 +805,14 @@ def p_union_declaration_3(p):
     """
         union_declaration : KEYWORD_UNION LBRACE RBRACE
     """
-    p[0] = AbsSintax.UnamedStructDeclaration()
+    p[0] = AbsSintax.UnamedUnionDeclaration()
 
 
 def p_union_declaration_4(p):
     """
         union_declaration : KEYWORD_UNION LBRACE struct_or_union_member_list RBRACE
     """
-    p[0] = AbsSintax.UnamedStructDeclaration(p[3])
+    p[0] = AbsSintax.UnamedUnionDeclaration(p[3])
 
 
 def p_union_declaration_5(p):
@@ -961,7 +961,7 @@ def p_assign_exp(p):
         assign_exp : unary_exp assign_operator assign_exp
                     | ternary_conditional_exp
     """
-    if len(p) == 3:
+    if len(p) == 4:
         p[0] = AbsSintax.AssignExpressionRecursion(p[1], p[2], p[3])
     else:
         p[0] = AbsSintax.AssignExpressionToTernary(p[1])
@@ -1418,7 +1418,7 @@ def main():
 
     _lexer.input(_input)
     parser = ply.yacc.yacc()
-    parser.parse()
+    parser.parse().print()
 
 
 if __name__ == "__main__":
